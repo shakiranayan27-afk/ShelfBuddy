@@ -1,0 +1,461 @@
+/* ShelfBuddy — plain CSS. Clean, modern, responsive. No frameworks. */
+
+:root {
+  --bg: #f6f8f7;
+  --surface: #ffffff;
+  --text: #1f2a26;
+  --text-muted: #6b7772;
+  --border: #e4e9e6;
+  --accent: #2e9e6b;
+  --accent-dark: #248257;
+
+  /* status colours */
+  --expired: #d64545;
+  --expired-bg: #fdecec;
+  --use-soon: #d98a1f;
+  --use-soon-bg: #fdf3e3;
+  --fresh: #2e9e6b;
+  --fresh-bg: #e8f6ef;
+
+  --radius: 14px;
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 6px 20px rgba(0, 0, 0, 0.04);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+}
+
+.app {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+}
+
+/* Header */
+.app-header {
+  text-align: center;
+  padding: 16px 0 24px;
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 2rem;
+  letter-spacing: -0.5px;
+}
+
+.tagline {
+  margin: 4px 0 0;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+/* Cards / sections */
+.app-main {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px;
+}
+
+.card h2 {
+  margin: 0 0 4px;
+  font-size: 1.2rem;
+}
+
+.section-sub {
+  margin: 0 0 16px;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+/* Add item form */
+.add-form-fields {
+  display: grid;
+  grid-template-columns: 2fr 1.3fr 1fr;
+  gap: 12px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.field em {
+  font-weight: 400;
+  font-style: normal;
+}
+
+.field input {
+  font-size: 0.95rem;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--text);
+}
+
+.field input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--fresh-bg);
+}
+
+.form-error {
+  color: var(--expired);
+  font-size: 0.85rem;
+  margin: 10px 0 0;
+}
+
+/* Buttons */
+.btn {
+  cursor: pointer;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: background 0.15s ease, opacity 0.15s ease;
+}
+
+.btn-primary {
+  margin-top: 14px;
+  padding: 11px 18px;
+  background: var(--accent);
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: var(--accent-dark);
+}
+
+.btn-delete {
+  padding: 6px 12px;
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+
+.btn-delete:hover {
+  color: var(--expired);
+  border-color: var(--expired);
+  background: var(--expired-bg);
+}
+
+/* Item list */
+.item-list {
+  list-style: none;
+  margin: 18px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.item-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-left-width: 4px;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.item-row.status-expired {
+  border-left-color: var(--expired);
+  opacity: 0.85;
+}
+.item-row.status-use-soon {
+  border-left-color: var(--use-soon);
+}
+.item-row.status-fresh {
+  border-left-color: var(--fresh);
+}
+
+.item-main {
+  display: flex;
+  flex-direction: column;
+}
+
+.item-name {
+  font-weight: 600;
+}
+
+.item-row.status-expired .item-name {
+  text-decoration: line-through;
+}
+
+.item-qty {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.item-side {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.item-detail {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  min-width: 96px;
+  text-align: right;
+}
+
+/* Status badges */
+.badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.badge-expired {
+  color: var(--expired);
+  background: var(--expired-bg);
+}
+.badge-use-soon {
+  color: var(--use-soon);
+  background: var(--use-soon-bg);
+}
+.badge-fresh {
+  color: var(--fresh);
+  background: var(--fresh-bg);
+}
+
+.empty-state {
+  margin: 18px 0 0;
+  padding: 24px;
+  text-align: center;
+  color: var(--text-muted);
+  background: var(--bg);
+  border-radius: 10px;
+  border: 1px dashed var(--border);
+}
+
+/* Dietary preference chips */
+.pref-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.pref-chip {
+  position: relative;
+  cursor: pointer;
+  padding: 9px 16px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: #fff;
+  transition: all 0.15s ease;
+}
+
+.pref-chip:hover {
+  border-color: var(--accent);
+  color: var(--accent-dark);
+}
+
+.pref-chip.selected {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+/* Hide the actual radio input; the chip is the control */
+.pref-chip input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* Footer */
+.app-footer {
+  text-align: center;
+  margin-top: 28px;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+/* Responsive: stack the add-form fields on narrow screens */
+@media (max-width: 560px) {
+  .add-form-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .item-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .item-side {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .item-detail {
+    text-align: left;
+  }
+}
+
+/* ---- Rescue Meal (Stage 2B) ---- */
+
+/* Secondary button (used for "Try again") */
+.btn-secondary {
+  margin-top: 12px;
+  padding: 9px 16px;
+  background: #fff;
+  color: var(--accent-dark);
+  border: 1px solid var(--accent);
+}
+
+.btn-secondary:hover {
+  background: var(--fresh-bg);
+}
+
+.btn-primary:disabled {
+  opacity: 0.65;
+  cursor: default;
+}
+
+/* Loading state */
+.rescue-loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+  color: var(--text-muted);
+  font-size: 0.92rem;
+}
+
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Error state */
+.rescue-error {
+  margin-top: 16px;
+  padding: 14px 16px;
+  background: var(--expired-bg);
+  border: 1px solid var(--expired);
+  border-radius: 10px;
+  color: var(--expired);
+}
+
+.rescue-error p {
+  margin: 0;
+}
+
+.rescue-error .btn-secondary {
+  border-color: var(--expired);
+  color: var(--expired);
+}
+
+.rescue-error .btn-secondary:hover {
+  background: #fff;
+}
+
+/* Recipe card */
+.recipe-card {
+  margin-top: 20px;
+  padding: 20px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.recipe-name {
+  margin: 0 0 12px;
+  font-size: 1.3rem;
+  color: var(--accent-dark);
+}
+
+.recipe-block {
+  margin-bottom: 16px;
+}
+
+.recipe-block h4 {
+  margin: 0 0 6px;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+}
+
+.recipe-block p {
+  margin: 0;
+}
+
+.recipe-block ul,
+.recipe-block ol {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.recipe-block li {
+  margin-bottom: 4px;
+}
+
+.recipe-steps li {
+  margin-bottom: 8px;
+}
+
+.recipe-none {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* Fixed AI disclaimer — always shown on a generated recipe */
+.recipe-disclaimer {
+  margin: 20px 0 0;
+  padding: 12px 14px;
+  background: var(--use-soon-bg);
+  border: 1px solid var(--use-soon);
+  border-radius: 10px;
+  color: #8a5a12;
+  font-size: 0.82rem;
+  line-height: 1.45;
+}

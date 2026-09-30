@@ -1,0 +1,28 @@
+{
+  "name": "shelfbuddy",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "ShelfBuddy — AI-powered household food management (MVP). Stage 1: pantry + expiry + dietary preference.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "server": "node server/index.js",
+    "start": "NODE_ENV=production node server/index.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@google/genai": "^2.24.0",
+    "dotenv": "^18.0.4",
+    "express": "^4.21.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "vite": "^5.4.11"
+  }
+}
