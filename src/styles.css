@@ -685,3 +685,266 @@ body {
   color: var(--text-muted);
   line-height: 1.3;
 }
+
+/* ---- Pantry / Calendar tabs ---- */
+.pantry-tabs {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  box-shadow: var(--shadow);
+}
+
+.pantry-tab {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 8px 20px;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  transition: all 0.15s ease;
+}
+
+.pantry-tab:hover {
+  color: var(--accent-dark);
+}
+
+.pantry-tab.active {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* ---- Expiry calendar ---- */
+.cal-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.cal-header h2 {
+  margin: 0;
+}
+
+.cal-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cal-nav .btn-secondary {
+  margin-top: 0;
+  padding: 6px 12px;
+}
+
+.cal-month {
+  min-width: 140px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.cal-today {
+  margin-left: 4px;
+}
+
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.cal-weekdays {
+  margin-bottom: 6px;
+}
+
+.cal-weekday {
+  text-align: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--text-muted);
+  padding: 4px 0;
+}
+
+.cal-cell {
+  min-height: 84px;
+  padding: 6px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font: inherit;
+  overflow: hidden;
+}
+
+.cal-cell:hover {
+  border-color: var(--accent);
+}
+
+.cal-cell-empty {
+  background: transparent;
+  border: none;
+  cursor: default;
+}
+
+.cal-cell.is-today {
+  border-color: var(--accent);
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+
+.cal-cell.is-selected {
+  outline: 2px solid var(--accent);
+  outline-offset: 0;
+}
+
+.cal-daynum {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* Desktop chips */
+.cal-chips {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.cal-chip {
+  font-size: 0.68rem;
+  line-height: 1.3;
+  padding: 1px 6px;
+  border-radius: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-left: 3px solid transparent;
+}
+
+.cal-chip.status-use-soon {
+  background: var(--use-soon-bg);
+  color: #8a5a12;
+  border-left-color: var(--use-soon);
+}
+.cal-chip.status-fresh {
+  background: var(--fresh-bg);
+  color: var(--accent-dark);
+  border-left-color: var(--fresh);
+}
+.cal-chip.status-expired {
+  background: var(--expired-bg);
+  color: var(--expired);
+  border-left-color: var(--expired);
+}
+
+.cal-more {
+  font-size: 0.66rem;
+  color: var(--text-muted);
+}
+
+/* Mobile dots (hidden on desktop) */
+.cal-dots {
+  display: none;
+  align-items: center;
+  gap: 4px;
+}
+
+.cal-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.cal-dot.status-use-soon {
+  background: var(--use-soon);
+}
+.cal-dot.status-fresh {
+  background: var(--fresh);
+}
+.cal-dot.status-expired {
+  background: var(--expired);
+}
+
+.cal-count {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+/* Selected-day detail panel */
+.cal-detail {
+  margin-top: 18px;
+  padding: 16px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.cal-detail h3 {
+  margin: 0 0 10px;
+  font-size: 1rem;
+}
+
+.cal-detail-empty {
+  margin: 0;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.cal-detail-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cal-detail-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.cal-detail-name {
+  font-weight: 600;
+}
+
+/* Responsive: shrink cells and swap chips for dots on narrow screens */
+@media (max-width: 560px) {
+  .cal-grid {
+    gap: 3px;
+  }
+  .cal-cell {
+    min-height: 54px;
+    padding: 4px;
+    align-items: center;
+  }
+  .cal-chips,
+  .cal-more {
+    display: none;
+  }
+  .cal-dots {
+    display: flex;
+  }
+  .cal-month {
+    min-width: 110px;
+    font-size: 0.85rem;
+  }
+}

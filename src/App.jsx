@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import Pantry from "./components/Pantry.jsx";
+import PantryTabs from "./components/PantryTabs.jsx";
+import CalendarView from "./components/CalendarView.jsx";
 import DietaryPreference from "./components/DietaryPreference.jsx";
 import RescueMeal from "./components/RescueMeal.jsx";
 import {
@@ -19,6 +21,8 @@ function makeId() {
 export default function App() {
   const [items, setItems] = useState(() => loadPantry());
   const [preference, setPreference] = useState(() => loadPreference());
+  // Which view of the My Pantry area is shown. Does not affect other sections.
+  const [pantryView, setPantryView] = useState("pantry"); // "pantry" | "calendar"
 
   // Persist whenever either piece of state changes.
   useEffect(() => {
@@ -45,7 +49,14 @@ export default function App() {
       </header>
 
       <main className="app-main">
-        <Pantry items={items} onAdd={handleAdd} onDelete={handleDelete} />
+        <PantryTabs view={pantryView} onChange={setPantryView} />
+
+        {pantryView === "pantry" ? (
+          <Pantry items={items} onAdd={handleAdd} onDelete={handleDelete} />
+        ) : (
+          <CalendarView items={items} />
+        )}
+
         <DietaryPreference value={preference} onChange={setPreference} />
         <RescueMeal pantry={items} preference={preference} />
       </main>
