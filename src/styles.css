@@ -459,3 +459,92 @@ body {
   font-size: 0.82rem;
   line-height: 1.45;
 }
+
+/* ---- Pantry usability: status legend + Use First summary ---- */
+
+/* Compact status legend */
+.status-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  margin: 0 0 14px;
+  padding: 10px 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend-item strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.legend-dot-use-soon {
+  background: var(--use-soon);
+}
+.legend-dot-fresh {
+  background: var(--fresh);
+}
+.legend-dot-expired {
+  background: var(--expired);
+}
+
+/* "Use First" alert summary — noticeable but calm (amber, not red) */
+.use-first {
+  margin: 0 0 16px;
+  padding: 12px 14px;
+  background: var(--use-soon-bg);
+  border: 1px solid var(--use-soon);
+  border-left-width: 4px;
+  border-radius: 10px;
+}
+
+.use-first-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #8a5a12; /* darker amber for readable contrast on the tint */
+  font-size: 0.92rem;
+}
+
+.use-first-icon {
+  font-size: 1rem;
+}
+
+.use-first-names {
+  margin: 6px 0 0;
+  color: var(--text);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+/* Subtle positive state when nothing is expiring soon */
+.use-first-ok {
+  margin: 0 0 16px;
+  padding: 8px 12px;
+  color: var(--accent-dark);
+  background: var(--fresh-bg);
+  border-radius: 10px;
+  font-size: 0.85rem;
+}
+
+/* Make Use Soon rows a touch more noticeable (soft amber tint) without
+   being alarming. Fresh stays green, Expired stays red — unchanged. */
+.item-row.status-use-soon {
+  background: var(--use-soon-bg);
+}
