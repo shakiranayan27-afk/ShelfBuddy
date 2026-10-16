@@ -57,7 +57,7 @@ export default function AddItemForm({ onAdd }) {
         </label>
 
         <label className="field">
-          <span>Quantity <em>(optional)</em></span>
+          <span>Quantity remaining <em>(optional)</em></span>
           <input
             type="text"
             value={quantity}

@@ -12,8 +12,13 @@ import { fileURLToPath } from "node:url";
 import express from "express";
 import { removeExpired, daysUntilExpiry } from "./safety.js";
 import { buildPrompt } from "./promptBuilder.js";
-import { callModel } from "./aiClient.js";
+import { callModel, callModelWithImage } from "./aiClient.js";
 import { RECIPE_SCHEMA, validateRecipe } from "./recipeSchema.js";
+import {
+  FOOD_DETECTION_PROMPT,
+  FOOD_DETECTION_SCHEMA,
+  validateDetections,
+} from "./foodVisionPrompt.js";
 
 const app = express();
 // Use the platform-provided port in production (e.g. Render); 3001 locally.
@@ -26,7 +31,12 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // Mirrors the frontend threshold so both sides agree.
 const USE_SOON_THRESHOLD_DAYS = 3;
 
-app.use(express.json());
+// Quick Add from Photo: max raw image size (5 MB) and allowed types.
+const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+const ALLOWED_IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
+
+// JSON body limit raised to 8 MB so a 5 MB image (base64 adds ~33%) fits.
+app.use(express.json({ limit: "8mb" }));
 
 // Simple health check so you can confirm the server is up.
 app.get("/api/health", (_req, res) => {
@@ -88,6 +98,68 @@ app.post("/api/rescue-meal", async (req, res) => {
     return res.status(502).json({
       error: "AI_BAD_OUTPUT",
       message: "The recipe came back in an unexpected format. Try again.",
+    });
+  }
+});
+
+// Quick Add from Photo — detect visible food names in an uploaded image.
+//
+// Request body: { imageBase64: "<base64, no data: prefix>", mimeType }
+// The image is held in memory for this request only and never written to
+// disk or logged. Gemini returns food NAMES ONLY — never expiry or safety.
+app.post("/api/detect-food", async (req, res) => {
+  const { imageBase64, mimeType } = req.body || {};
+
+  // Basic validation of the upload.
+  if (typeof imageBase64 !== "string" || !imageBase64 || !mimeType) {
+    return res.status(400).json({
+      error: "BAD_IMAGE",
+      message: "No image received. Please choose a photo and try again.",
+    });
+  }
+
+  if (!ALLOWED_IMAGE_TYPES.has(mimeType)) {
+    return res.status(400).json({
+      error: "BAD_IMAGE_TYPE",
+      message: "Unsupported image type. Use a JPEG, PNG, or WebP photo.",
+    });
+  }
+
+  // Reject oversized images. base64 length * 3/4 ≈ raw byte size.
+  const approxBytes = Math.floor((imageBase64.length * 3) / 4);
+  if (approxBytes > MAX_IMAGE_BYTES) {
+    return res.status(413).json({
+      error: "IMAGE_TOO_LARGE",
+      message: "That image is too large. Please use a photo under 5 MB.",
+    });
+  }
+
+  try {
+    const raw = await callModelWithImage({
+      textPrompt: FOOD_DETECTION_PROMPT,
+      imageBase64,
+      mimeType,
+      schema: FOOD_DETECTION_SCHEMA,
+    });
+    const { foods } = validateDetections(raw);
+    return res.json({ foods });
+  } catch (e) {
+    if (e.code === "AI_NOT_CONFIGURED") {
+      return res.status(500).json({
+        error: "AI_NOT_CONFIGURED",
+        message: "AI service is not configured. Check the server .env.",
+      });
+    }
+    if (e.code === "AI_CALL_FAILED") {
+      return res.status(502).json({
+        error: "AI_CALL_FAILED",
+        message: "Couldn't analyse the photo. Please try again.",
+      });
+    }
+    // AI_BAD_OUTPUT or a validation error
+    return res.status(502).json({
+      error: "AI_BAD_OUTPUT",
+      message: "Couldn't read foods from that photo. Try another, or add manually.",
     });
   }
 });

@@ -66,3 +66,88 @@ export async function generateRescueMeal(pantry, preference) {
 
   return data.recipe;
 }
+
+// --- Quick Add from Photo ---
+
+// Client-side guards (mirrored on the backend as the source of truth).
+const MAX_IMAGE_BYTES = 5 * 1024 * 1024; // 5 MB
+const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
+
+// Read a File into a base64 string (without the "data:...;base64," prefix).
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = String(reader.result || "");
+      const comma = result.indexOf(",");
+      resolve(comma >= 0 ? result.slice(comma + 1) : result);
+    };
+    reader.onerror = () => reject(new Error("Couldn't read that file."));
+    reader.readAsDataURL(file);
+  });
+}
+
+/**
+ * Detect visible foods from a photo via our backend. Each result has a name,
+ * an expiryDate ("" unless clearly printed), a packSize ("" unless clearly
+ * printed), and a looseCount ("" unless a countable loose item). The user
+ * reviews/confirms before an item is added; detected hints never auto-fill
+ * the quantity field.
+ *
+ * @param {File} file an image file
+ * @returns {Promise<Array<{ name: string, expiryDate: string, packSize: string, looseCount: string }>>}
+ * @throws {Error} with a friendly .message on any failure
+ */
+export async function detectFoodFromImage(file) {
+  if (!file) {
+    throw new Error("Please choose a photo first.");
+  }
+  if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+    throw new Error("Unsupported image type. Use a JPEG, PNG, or WebP photo.");
+  }
+  if (file.size > MAX_IMAGE_BYTES) {
+    throw new Error("That image is too large. Please use a photo under 5 MB.");
+  }
+
+  const imageBase64 = await fileToBase64(file);
+
+  let res;
+  try {
+    res = await fetch("/api/detect-food", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ imageBase64, mimeType: file.type }),
+    });
+  } catch {
+    throw new Error("Couldn't reach the photo service. Please try again.");
+  }
+
+  let data = null;
+  try {
+    data = await res.json();
+  } catch {
+    data = null;
+  }
+
+  if (!res.ok) {
+    const message =
+      (data && data.message) || "Couldn't analyse the photo. Please try again.";
+    throw new Error(message);
+  }
+
+  if (!data || !Array.isArray(data.foods)) {
+    throw new Error("Couldn't read foods from that photo. Try another, or add manually.");
+  }
+
+  // Normalise to objects, tolerating a bare-string shape and missing fields.
+  return data.foods.map((f) =>
+    typeof f === "string"
+      ? { name: f, expiryDate: "", packSize: "", looseCount: "" }
+      : {
+          name: String(f?.name ?? ""),
+          expiryDate: String(f?.expiryDate ?? ""),
+          packSize: String(f?.packSize ?? ""),
+          looseCount: String(f?.looseCount ?? ""),
+        }
+  );
+}

@@ -1,5 +1,6 @@
 import AddItemForm from "./AddItemForm.jsx";
 import PantryItemRow from "./PantryItemRow.jsx";
+import QuickAddPhoto from "./QuickAddPhoto.jsx";
 import { sortItems, classify, daysUntilExpiry, STATUS } from "../lib/expiry.js";
 
 // Compact, read-only status legend. Purely presentational — it describes the
@@ -72,6 +73,8 @@ export default function Pantry({ items, onAdd, onDelete }) {
 
       {/* Use First summary only renders meaningfully when items exist. */}
       {items.length > 0 && <UseFirstSummary items={items} />}
+
+      <QuickAddPhoto onAdd={onAdd} />
 
       <AddItemForm onAdd={onAdd} />
 

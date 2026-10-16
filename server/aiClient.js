@@ -70,3 +70,56 @@ export async function callModel(prompt, schema) {
     throw err;
   }
 }
+
+/**
+ * Call Gemini with a text prompt AND an inline image, returning parsed JSON.
+ * Used by the Quick Add from Photo feature. The image is sent inline (base64)
+ * for this single request only — the SDK does not persist it.
+ *
+ * @param {object} args
+ * @param {string} args.textPrompt   instruction text
+ * @param {string} args.imageBase64  raw base64 image data (no data: prefix)
+ * @param {string} args.mimeType     e.g. "image/jpeg"
+ * @param {object} args.schema       structured-output response schema
+ * @returns {Promise<object>}        parsed JSON object from the model
+ * @throws  Error with .code = "AI_NOT_CONFIGURED" | "AI_CALL_FAILED" | "AI_BAD_OUTPUT"
+ */
+export async function callModelWithImage({ textPrompt, imageBase64, mimeType, schema }) {
+  const ai = getClient();
+
+  let response;
+  try {
+    response = await ai.models.generateContent({
+      model: MODEL,
+      contents: [
+        { text: textPrompt },
+        { inlineData: { mimeType, data: imageBase64 } },
+      ],
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: schema,
+      },
+    });
+  } catch (e) {
+    // Log a message only — never the key, prompt, or image data.
+    console.error("Gemini image call failed:", e?.message || "unknown error");
+    const err = new Error("AI_CALL_FAILED");
+    err.code = "AI_CALL_FAILED";
+    throw err;
+  }
+
+  const text = response?.text;
+  if (!text) {
+    const err = new Error("AI_BAD_OUTPUT");
+    err.code = "AI_BAD_OUTPUT";
+    throw err;
+  }
+
+  try {
+    return JSON.parse(text);
+  } catch {
+    const err = new Error("AI_BAD_OUTPUT");
+    err.code = "AI_BAD_OUTPUT";
+    throw err;
+  }
+}

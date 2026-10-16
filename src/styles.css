@@ -548,3 +548,140 @@ body {
 .item-row.status-use-soon {
   background: var(--use-soon-bg);
 }
+
+/* ---- Quick Add from Photo ---- */
+
+.quick-add {
+  margin: 0 0 16px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.quick-add-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 11px 14px;
+  background: var(--bg);
+  border: none;
+  cursor: pointer;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.quick-add-toggle:hover {
+  background: var(--fresh-bg);
+}
+
+.quick-add-chevron {
+  color: var(--text-muted);
+  font-size: 0.7rem;
+}
+
+.quick-add-body {
+  padding: 14px;
+  border-top: 1px solid var(--border);
+}
+
+.quick-add-note {
+  margin: 0 0 12px;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* The file input is hidden; this label is the visible control. */
+.quick-add-pick {
+  display: inline-block;
+  margin-top: 0;
+  cursor: pointer;
+}
+
+.quick-add-empty {
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  background: var(--bg);
+  border: 1px dashed var(--border);
+  border-radius: 10px;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.quick-add-review {
+  margin-top: 16px;
+}
+
+.quick-add-review h4 {
+  margin: 0 0 10px;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+}
+
+.qa-list {
+  list-style: none;
+  margin: 0 0 12px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.qa-row {
+  padding: 12px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.qa-fields {
+  display: grid;
+  grid-template-columns: 2fr 1.3fr 1fr;
+  gap: 10px;
+}
+
+.qa-row-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.qa-row-actions .btn-primary {
+  margin-top: 0;
+}
+
+.qa-row-actions .btn-primary:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+/* Responsive: stack the review fields on narrow screens */
+@media (max-width: 560px) {
+  .qa-fields {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Hint shown when an expiry date was read from the packaging */
+.qa-date-hint {
+  margin-top: 4px;
+  font-size: 0.72rem;
+  font-weight: 400;
+  color: var(--use-soon);
+  line-height: 1.3;
+}
+
+/* Hints showing printed pack size / loose-item count (informational only) */
+.qa-size-hint {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.72rem;
+  font-weight: 400;
+  color: var(--text-muted);
+  line-height: 1.3;
+}
