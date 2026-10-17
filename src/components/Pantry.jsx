@@ -63,7 +63,7 @@ export default function Pantry({ items, onAdd, onDelete }) {
   const sorted = sortItems(items);
 
   return (
-    <section className="card">
+    <section className="card pantry-card">
       <h2>My Pantry</h2>
       <p className="section-sub">
         Add what you have at home. Items that need using soon rise to the top.

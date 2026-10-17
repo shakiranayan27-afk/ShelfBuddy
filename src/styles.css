@@ -997,3 +997,1276 @@ body {
   margin-bottom: 4px;
   color: var(--text);
 }
+
+/* ========================================================================== 
+   ShelfBuddy visual refresh — colourful, warm, sustainable consumer aesthetic
+   Presentation only: no behavior, layout logic, or status meaning changes.
+   ========================================================================== */
+
+:root {
+  --bg: #faf7ed;
+  --surface: #fffefa;
+  --text: #19342b;
+  --text-muted: #61736b;
+  --border: #d4e2d8;
+  --accent: #176b4d;
+  --accent-dark: #10543b;
+
+  --expired: #c83f47;
+  --expired-bg: #fbe8e8;
+  --use-soon: #c97813;
+  --use-soon-bg: #fff0d2;
+  --fresh: #23845c;
+  --fresh-bg: #dff3e8;
+
+  --sage: #e4efe3;
+  --sage-strong: #d2e5d5;
+  --mint: #ddf3e7;
+  --cream: #fff3d7;
+  --warm-white: #fffdf7;
+
+  --radius: 19px;
+  --shadow: 0 2px 6px rgba(22, 71, 50, 0.07),
+    0 14px 34px rgba(22, 71, 50, 0.09);
+  --shadow-hover: 0 4px 10px rgba(22, 71, 50, 0.09),
+    0 18px 42px rgba(22, 71, 50, 0.13);
+}
+
+html {
+  min-height: 100%;
+  background: #eef3e5;
+}
+
+body {
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+  background:
+    radial-gradient(circle at 8% 8%, rgba(255, 232, 177, 0.72) 0, rgba(255, 232, 177, 0) 30%),
+    radial-gradient(circle at 92% 18%, rgba(182, 221, 193, 0.7) 0, rgba(182, 221, 193, 0) 34%),
+    linear-gradient(145deg, #fff5dc 0%, #f8f7e9 42%, #e4efe3 100%);
+  background-attachment: fixed;
+}
+
+/* Soft organic background shapes, always behind the application. */
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: 45% 55% 60% 40% / 55% 45% 55% 45%;
+  filter: blur(18px);
+  opacity: 0.55;
+}
+
+body::before {
+  width: 330px;
+  height: 330px;
+  top: 90px;
+  right: -120px;
+  background: rgba(148, 205, 165, 0.42);
+  transform: rotate(18deg);
+}
+
+body::after {
+  width: 290px;
+  height: 290px;
+  left: -120px;
+  bottom: 5vh;
+  background: rgba(255, 219, 145, 0.36);
+  transform: rotate(-24deg);
+}
+
+.app {
+  position: relative;
+  z-index: 1;
+  max-width: 820px;
+  padding: 28px 18px 56px;
+}
+
+/* Stronger green-tinted hero */
+.app-header {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 24px;
+  padding: 34px 24px 30px;
+  border: 1px solid rgba(23, 107, 77, 0.2);
+  border-radius: 26px;
+  background:
+    radial-gradient(circle at 18% 15%, rgba(255, 247, 214, 0.72), transparent 34%),
+    linear-gradient(135deg, #d2ead9 0%, #e4f2df 54%, #f4edc9 100%);
+  box-shadow: 0 4px 12px rgba(22, 71, 50, 0.08),
+    0 20px 46px rgba(22, 71, 50, 0.12);
+}
+
+.app-header::after {
+  content: "";
+  position: absolute;
+  width: 160px;
+  height: 160px;
+  right: -55px;
+  bottom: -85px;
+  border-radius: 50%;
+  background: rgba(39, 137, 92, 0.14);
+}
+
+.app-header h1 {
+  position: relative;
+  z-index: 1;
+  color: #124f39;
+  font-size: clamp(2.15rem, 5vw, 2.75rem);
+  line-height: 1.1;
+  letter-spacing: -1.25px;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.tagline {
+  position: relative;
+  z-index: 1;
+  margin-top: 9px;
+  color: #42685a;
+  font-size: 1rem;
+  font-weight: 550;
+  letter-spacing: 0.1px;
+}
+
+.app-main {
+  gap: 24px;
+}
+
+/* Layered, rounded section surfaces */
+.card {
+  border-color: rgba(70, 120, 92, 0.22);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 24px;
+  transition: box-shadow 180ms ease, transform 180ms ease;
+}
+
+.card h2 {
+  color: #174f3b;
+  font-size: 1.35rem;
+  letter-spacing: -0.25px;
+}
+
+.section-sub {
+  margin-top: 3px;
+  margin-bottom: 19px;
+  color: #587066;
+}
+
+/* Visibly distinct section identities */
+.pantry-card {
+  background: #edf6ed;
+  border-color: #bed7c4;
+  box-shadow: 0 2px 7px rgba(23, 90, 62, 0.08),
+    0 16px 36px rgba(23, 90, 62, 0.11);
+}
+
+.calendar-card {
+  background: #e5efe2;
+  border-color: #b9d1ba;
+  box-shadow: 0 2px 7px rgba(23, 90, 62, 0.08),
+    0 16px 36px rgba(23, 90, 62, 0.11);
+}
+
+.dietary-card {
+  background: #fff8e6;
+  border-color: #ead9aa;
+}
+
+.rescue-card {
+  background: linear-gradient(140deg, #fff0cc 0%, #f5f0d8 52%, #e3efe0 100%);
+  border-color: #d6ca99;
+  box-shadow: 0 3px 9px rgba(91, 75, 28, 0.08),
+    0 18px 40px rgba(36, 91, 61, 0.12);
+}
+
+/* Intentional segmented navigation */
+.pantry-tabs {
+  align-self: center;
+  padding: 6px;
+  gap: 5px;
+  background: #d4e6d5;
+  border-color: #abc9b2;
+  box-shadow: 0 2px 5px rgba(22, 71, 50, 0.08),
+    0 10px 24px rgba(22, 71, 50, 0.1);
+}
+
+.pantry-tab {
+  min-width: 112px;
+  padding: 9px 24px;
+  color: #45695a;
+  transition: color 160ms ease, background 160ms ease, box-shadow 160ms ease,
+    transform 160ms ease;
+}
+
+.pantry-tab:hover:not(.active) {
+  color: #174f3b;
+  background: rgba(255, 255, 255, 0.52);
+}
+
+.pantry-tab.active {
+  background: #176b4d;
+  color: #fffefa;
+  box-shadow: 0 5px 14px rgba(16, 84, 59, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.24);
+}
+
+/* Fields and buttons */
+.field input {
+  min-height: 43px;
+  border-color: #c7d9cd;
+  border-radius: 12px;
+  background: rgba(255, 254, 250, 0.92);
+  box-shadow: inset 0 1px 2px rgba(22, 71, 50, 0.04);
+  transition: border-color 160ms ease, box-shadow 160ms ease,
+    background 160ms ease;
+}
+
+.field input:hover {
+  border-color: #9fbea9;
+}
+
+.field input:focus {
+  border-color: var(--accent);
+  background: #fffefa;
+  box-shadow: 0 0 0 4px rgba(23, 107, 77, 0.15);
+}
+
+.btn {
+  border-radius: 12px;
+  transition: background 160ms ease, border-color 160ms ease,
+    color 160ms ease, box-shadow 160ms ease, transform 160ms ease,
+    opacity 160ms ease;
+}
+
+.btn-primary {
+  background: #176b4d;
+  color: #fffefa;
+  box-shadow: 0 6px 15px rgba(23, 107, 77, 0.24);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #10543b;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 19px rgba(16, 84, 59, 0.3);
+}
+
+.btn-primary:active:not(:disabled),
+.pantry-tab:active {
+  transform: translateY(1px);
+}
+
+.btn-secondary {
+  background: rgba(255, 254, 250, 0.86);
+  color: #175c43;
+  border-color: #79a98d;
+  box-shadow: 0 3px 8px rgba(22, 71, 50, 0.07);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: #e0f2e7;
+  border-color: #397c5e;
+  transform: translateY(-1px);
+}
+
+.btn-delete {
+  background: rgba(255, 254, 250, 0.72);
+  border-color: #cbd9d0;
+}
+
+.btn-delete:hover {
+  background: #fbe8e8;
+  border-color: #c83f47;
+  color: #a92f38;
+}
+
+button:focus-visible,
+input:focus-visible,
+.pref-chip:focus-within {
+  outline: 3px solid rgba(23, 107, 77, 0.36);
+  outline-offset: 3px;
+}
+
+/* Pantry legend and summary now feel integrated with the tinted card */
+.status-legend {
+  padding: 12px 14px;
+  background: rgba(255, 254, 250, 0.66);
+  border-color: #c6daca;
+  border-radius: 13px;
+}
+
+.use-first {
+  padding: 14px 16px;
+  background: #ffedc4;
+  border-color: #dda04c;
+  border-left-width: 5px;
+  border-radius: 13px;
+  box-shadow: 0 5px 14px rgba(177, 112, 17, 0.08);
+}
+
+.use-first-ok {
+  padding: 10px 13px;
+  background: #dcefe3;
+  border: 1px solid #b6d6c1;
+  border-radius: 12px;
+}
+
+/* Distinct but elegant pantry item statuses */
+.item-list {
+  gap: 12px;
+}
+
+.item-row {
+  padding: 14px 16px;
+  border-width: 1px 1px 1px 5px;
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(24, 74, 53, 0.06);
+  transition: transform 160ms ease, box-shadow 160ms ease,
+    border-color 160ms ease;
+}
+
+.item-row:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 7px 17px rgba(24, 74, 53, 0.1);
+}
+
+.item-row.status-fresh {
+  background: #e2f3e8;
+  border-color: #99c9aa;
+  border-left-color: var(--fresh);
+}
+
+.item-row.status-use-soon {
+  background: #fff0d2;
+  border-color: #e7c384;
+  border-left-color: var(--use-soon);
+  box-shadow: 0 5px 15px rgba(185, 116, 18, 0.11);
+}
+
+.item-row.status-expired {
+  background: #f9e7e7;
+  border-color: #e6b6b9;
+  border-left-color: var(--expired);
+  opacity: 0.92;
+}
+
+.item-name {
+  color: #183e31;
+  font-size: 0.98rem;
+}
+
+.badge {
+  padding: 5px 10px;
+  border: 1px solid currentColor;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
+}
+
+.badge-fresh {
+  color: #176b4d;
+  background: #d2ebdc;
+}
+
+.badge-use-soon {
+  color: #995b0a;
+  background: #ffe5ae;
+}
+
+.badge-expired {
+  color: #a82e36;
+  background: #f7d8da;
+}
+
+.empty-state {
+  background: rgba(255, 254, 250, 0.62);
+  border-color: #b9d1c0;
+  border-radius: 14px;
+}
+
+/* Quick Add is a visible mint AI feature panel */
+.quick-add {
+  position: relative;
+  border-color: #8fc5a4;
+  border-radius: 16px;
+  background: #d9f1e3;
+  box-shadow: 0 7px 19px rgba(23, 107, 77, 0.11),
+    inset 0 1px 0 rgba(255, 255, 255, 0.62);
+}
+
+.quick-add-toggle {
+  padding: 15px 17px;
+  background: #caead7;
+  color: #144f39;
+  font-size: 0.97rem;
+  transition: background 160ms ease, color 160ms ease;
+}
+
+.quick-add-toggle:hover {
+  background: #bde2cc;
+  color: #0f4934;
+}
+
+.quick-add-toggle > span:first-child {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: -0.1px;
+}
+
+.quick-add-chevron {
+  color: #2c7154;
+}
+
+.quick-add-body {
+  padding: 17px;
+  border-top-color: #9bc9ad;
+  background: #e2f4e9;
+}
+
+.quick-add-note {
+  color: #496b5d;
+}
+
+.quick-add-pick {
+  padding: 11px 17px;
+  background: #176b4d;
+  border-color: #176b4d;
+  color: #fffefa;
+  box-shadow: 0 6px 15px rgba(23, 107, 77, 0.23);
+}
+
+.quick-add-pick:hover {
+  background: #10543b;
+  border-color: #10543b;
+  color: #fff;
+}
+
+.quick-add-empty {
+  background: rgba(255, 254, 250, 0.66);
+  border-color: #a9cbb5;
+}
+
+.qa-row {
+  padding: 14px;
+  background: rgba(255, 254, 250, 0.92);
+  border-color: #bad7c4;
+  border-radius: 13px;
+  box-shadow: 0 4px 11px rgba(23, 90, 62, 0.06);
+}
+
+/* Dietary controls */
+.pref-chip {
+  background: rgba(255, 254, 250, 0.86);
+  border-color: #dbc98e;
+  color: #5e675b;
+  box-shadow: 0 2px 5px rgba(99, 79, 27, 0.05);
+}
+
+.pref-chip:hover {
+  background: #eef5e8;
+  border-color: #4e8a69;
+  color: #174f3b;
+  transform: translateY(-1px);
+}
+
+.pref-chip.selected {
+  background: #176b4d;
+  border-color: #176b4d;
+  color: #fffefa;
+  box-shadow: 0 6px 14px rgba(23, 107, 77, 0.23);
+}
+
+/* Calendar surface and interactions */
+.cal-weekday {
+  color: #486b5c;
+}
+
+.cal-cell {
+  background: rgba(255, 254, 250, 0.84);
+  border-color: #bfd2c0;
+  border-radius: 11px;
+  box-shadow: 0 2px 6px rgba(22, 71, 50, 0.04);
+  transition: background 150ms ease, border-color 150ms ease,
+    box-shadow 150ms ease, transform 150ms ease;
+}
+
+.cal-cell:hover:not(.cal-cell-empty) {
+  background: #f6fbf3;
+  border-color: #4f936c;
+  transform: translateY(-1px);
+  box-shadow: 0 5px 12px rgba(22, 71, 50, 0.09);
+}
+
+.cal-cell.is-today {
+  background: #e0f1e5;
+  border-color: #2e815d;
+}
+
+.cal-cell.is-selected {
+  background: #fff8dc;
+  outline-color: #176b4d;
+  box-shadow: 0 6px 14px rgba(22, 71, 50, 0.12);
+}
+
+.cal-chip {
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.cal-detail {
+  background: rgba(255, 254, 250, 0.68);
+  border-color: #b8d0bc;
+  border-radius: 14px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.58);
+}
+
+.cal-detail-item {
+  background: #fffefa;
+  border-color: #c8d9cc;
+  border-radius: 11px;
+}
+
+/* Smart Meal area and premium result card */
+.rescue-card > .btn-primary {
+  padding: 12px 20px;
+  font-size: 0.94rem;
+}
+
+.recipe-card {
+  position: relative;
+  overflow: hidden;
+  margin-top: 22px;
+  padding: 25px;
+  background: #fffdf7;
+  border-color: #b9d2bd;
+  border-radius: 18px;
+  box-shadow: 0 5px 14px rgba(23, 76, 53, 0.09),
+    0 20px 42px rgba(23, 76, 53, 0.13);
+}
+
+.recipe-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: linear-gradient(90deg, #176b4d, #5ea67d, #d69a36);
+}
+
+.recipe-name {
+  margin: 3px 0 12px;
+  color: #124f39;
+  font-size: clamp(1.55rem, 4vw, 1.9rem);
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+}
+
+.recipe-meta {
+  gap: 10px;
+  margin-bottom: 19px;
+}
+
+.recipe-meta-pill {
+  padding: 7px 13px;
+  background: #e2f2e6;
+  border-color: #a9cbb4;
+  color: #225942;
+  box-shadow: 0 3px 8px rgba(23, 90, 62, 0.07);
+}
+
+.recipe-block {
+  margin-bottom: 19px;
+}
+
+.recipe-block h4 {
+  color: #537064;
+}
+
+.recipe-use-soon {
+  padding: 15px 17px;
+  background: #ffedc7;
+  border-color: #d99a3d;
+  border-left-width: 5px;
+  border-radius: 13px;
+  box-shadow: 0 5px 13px rgba(177, 112, 17, 0.08);
+}
+
+.recipe-steps {
+  padding-left: 23px !important;
+}
+
+.recipe-steps li {
+  margin-bottom: 11px;
+  padding-left: 4px;
+  line-height: 1.55;
+}
+
+.recipe-steps li::marker {
+  color: #176b4d;
+  font-weight: 800;
+}
+
+.recipe-disclaimer {
+  padding: 14px 16px;
+  background: #fff1d2;
+  border-color: #d3983f;
+  border-radius: 12px;
+  color: #765019;
+}
+
+.rescue-loading {
+  color: #406c59;
+}
+
+.spinner {
+  border-color: #b8d5c2;
+  border-top-color: #176b4d;
+}
+
+.rescue-error {
+  background: #f9e6e6;
+  border-color: #cc555c;
+  border-radius: 13px;
+  color: #a72f37;
+}
+
+.app-footer {
+  color: #517063;
+  font-weight: 600;
+}
+
+/* Refined responsive spacing and interactions */
+@media (max-width: 620px) {
+  .app {
+    padding: 18px 12px 42px;
+  }
+
+  .app-header {
+    margin-bottom: 19px;
+    padding: 27px 18px 24px;
+    border-radius: 21px;
+  }
+
+  .app-main {
+    gap: 18px;
+  }
+
+  .card {
+    padding: 18px;
+    border-radius: 17px;
+  }
+
+  .pantry-tabs {
+    width: 100%;
+  }
+
+  .pantry-tab {
+    flex: 1;
+    min-width: 0;
+    padding-inline: 12px;
+  }
+
+  .quick-add-toggle {
+    padding: 14px;
+  }
+
+  .recipe-card {
+    padding: 20px 17px;
+  }
+
+  .recipe-meta-pill {
+    flex: 1;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 380px) {
+  .item-side {
+    flex-wrap: wrap;
+  }
+
+  .cal-nav {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .cal-today {
+    margin-left: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ========================================================================== 
+   Final pitch-brand alignment — cream, mint, chartreuse, forest green
+   Styling only. Status amber/red meanings remain unchanged.
+   ========================================================================== */
+
+:root {
+  --bg: #fff8e8;
+  --surface: #fffcf4;
+  --text: #18352a;
+  --text-muted: #5a7066;
+  --border: #cbded1;
+  --accent: #1f6a43;
+  --accent-dark: #155337;
+  --sage: #ddf3e5;
+  --sage-strong: #c7e7d3;
+  --mint: #ddf3e5;
+  --cream: #fff8e8;
+  --warm-white: #fffcf4;
+  --lime: #ddfb82;
+  --lime-soft: #ebf9b5;
+  --fresh: #1f6a43;
+  --fresh-bg: #dff3e6;
+}
+
+html {
+  background: #edf3d8;
+}
+
+body {
+  background:
+    radial-gradient(circle at 88% 7%, rgba(221, 251, 130, 0.9) 0, rgba(221, 251, 130, 0) 30%),
+    radial-gradient(circle at 8% 34%, rgba(221, 243, 229, 0.92) 0, rgba(221, 243, 229, 0) 34%),
+    linear-gradient(145deg, #fff3d3 0%, #fff8e8 38%, #e8f2df 72%, #ddecda 100%);
+}
+
+body::before {
+  width: 370px;
+  height: 370px;
+  top: 40px;
+  right: -125px;
+  background: rgba(221, 251, 130, 0.68);
+  filter: blur(22px);
+  opacity: 0.72;
+}
+
+body::after {
+  width: 330px;
+  height: 330px;
+  left: -135px;
+  bottom: 3vh;
+  background: rgba(206, 239, 218, 0.72);
+  filter: blur(24px);
+  opacity: 0.66;
+}
+
+/* Strong, clean pitch-style colour blocking in the hero. */
+.app-header {
+  border-color: rgba(31, 106, 67, 0.28);
+  background:
+    radial-gradient(circle at 10% 8%, rgba(255, 255, 255, 0.38), transparent 26%),
+    linear-gradient(
+      125deg,
+      #fff0c9 0%,
+      #fff0c9 34%,
+      #d9f1e2 34%,
+      #d9f1e2 72%,
+      #ddfb82 72%,
+      #ddfb82 100%
+    );
+  box-shadow: 0 5px 14px rgba(21, 83, 55, 0.1),
+    0 22px 48px rgba(21, 83, 55, 0.16);
+}
+
+.app-header::after {
+  background: rgba(31, 106, 67, 0.16);
+  border: 18px solid rgba(255, 252, 244, 0.2);
+}
+
+.app-header h1 {
+  color: #155337;
+}
+
+.tagline {
+  color: #345f4b;
+}
+
+.card h2,
+.recipe-name {
+  color: #155337;
+}
+
+/* More saturated, clearly differentiated main surfaces. */
+.pantry-card {
+  background: #e2f1e4;
+  border-color: #8fc5a1;
+  box-shadow: 0 3px 9px rgba(31, 106, 67, 0.1),
+    0 18px 40px rgba(31, 106, 67, 0.14);
+}
+
+.calendar-card {
+  background: #dcebd9;
+  border-color: #8eb993;
+  box-shadow: 0 3px 9px rgba(31, 106, 67, 0.1),
+    0 18px 40px rgba(31, 106, 67, 0.14);
+}
+
+.dietary-card {
+  background: #fff4d8;
+  border-color: #e5ce87;
+}
+
+.rescue-card {
+  background:
+    radial-gradient(circle at 96% 5%, rgba(221, 251, 130, 0.72), transparent 30%),
+    linear-gradient(140deg, #fff0c9 0%, #fff8e8 55%, #dff1e5 100%);
+  border-color: #b7c978;
+  box-shadow: 0 4px 12px rgba(93, 104, 40, 0.11),
+    0 20px 44px rgba(31, 106, 67, 0.16);
+}
+
+/* Lime/mint segmented navigation with forest-green active state. */
+.pantry-tabs {
+  background: #ebf9b5;
+  border-color: #b9d66b;
+  box-shadow: 0 3px 8px rgba(62, 94, 42, 0.11),
+    0 12px 27px rgba(31, 106, 67, 0.13);
+}
+
+.pantry-tab {
+  color: #3f624e;
+}
+
+.pantry-tab:hover:not(.active) {
+  background: #d9f1e2;
+  color: #155337;
+}
+
+.pantry-tab.active {
+  background: #1f6a43;
+  color: #fffcf4;
+  box-shadow: 0 6px 16px rgba(21, 83, 55, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.24);
+}
+
+/* Major actions retain strong pitch-style forest green. */
+.btn-primary,
+.quick-add-pick,
+.pref-chip.selected {
+  background: #1f6a43;
+  border-color: #1f6a43;
+  color: #fffcf4;
+  box-shadow: 0 7px 17px rgba(31, 106, 67, 0.28);
+}
+
+.btn-primary:hover:not(:disabled),
+.quick-add-pick:hover,
+.pref-chip.selected:hover {
+  background: #155337;
+  border-color: #155337;
+}
+
+.btn-secondary {
+  background: #fffcf4;
+  color: #155337;
+  border-color: #6eaa85;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: #ebf9b5;
+  border-color: #1f6a43;
+}
+
+.field input:focus {
+  border-color: #1f6a43;
+  box-shadow: 0 0 0 4px rgba(221, 251, 130, 0.58);
+}
+
+button:focus-visible,
+input:focus-visible,
+.pref-chip:focus-within {
+  outline-color: rgba(31, 106, 67, 0.48);
+}
+
+/* Pantry utility surfaces feel brighter without competing with statuses. */
+.status-legend {
+  background: rgba(255, 252, 244, 0.76);
+  border-color: #a9ccb5;
+}
+
+.use-first-ok {
+  background: #d5eddc;
+  border-color: #91c1a1;
+  color: #155337;
+}
+
+.item-row.status-fresh {
+  background: #d9efdf;
+  border-color: #83bd98;
+  border-left-color: #1f6a43;
+}
+
+.badge-fresh {
+  color: #155337;
+  background: #c8e9d3;
+}
+
+/* Keep amber and red status systems intact and visually dominant. */
+.item-row.status-use-soon {
+  background: #fff0d2;
+  border-color: #e7c384;
+  border-left-color: var(--use-soon);
+}
+
+.item-row.status-expired {
+  background: #f9e7e7;
+  border-color: #e6b6b9;
+  border-left-color: var(--expired);
+}
+
+/* Quick Add reads clearly as a mint AI feature with a lime highlight. */
+.quick-add {
+  background: #d5f0df;
+  border-color: #63a97d;
+  box-shadow: 0 8px 22px rgba(31, 106, 67, 0.15),
+    inset 0 5px 0 #ddfb82;
+}
+
+.quick-add-toggle {
+  padding-top: 18px;
+  background: #c8ead5;
+  color: #155337;
+}
+
+.quick-add-toggle:hover {
+  background: #b9e2c9;
+}
+
+.quick-add-toggle > span:first-child {
+  font-weight: 750;
+}
+
+.quick-add-chevron {
+  color: #1f6a43;
+}
+
+.quick-add-body {
+  background: #ddf3e5;
+  border-top-color: #83bb97;
+}
+
+.quick-add-review h4 {
+  color: #315f4a;
+}
+
+.qa-row {
+  background: #fffcf4;
+  border-color: #9bc6aa;
+}
+
+/* Calendar keeps a sage identity with energetic lime selection cues. */
+.cal-cell {
+  background: rgba(255, 252, 244, 0.9);
+  border-color: #aac6ab;
+}
+
+.cal-cell:hover:not(.cal-cell-empty) {
+  background: #f1f9cf;
+  border-color: #5a9b70;
+}
+
+.cal-cell.is-today {
+  background: #d6efdf;
+  border-color: #1f6a43;
+}
+
+.cal-cell.is-selected {
+  background: #ebf9b5;
+  outline-color: #1f6a43;
+}
+
+.cal-detail {
+  background: rgba(255, 252, 244, 0.78);
+  border-color: #93b99a;
+}
+
+/* Premium Smart Meal result: cream/lime surface, never plain white. */
+.recipe-card {
+  background:
+    radial-gradient(circle at 94% 7%, rgba(221, 251, 130, 0.58), transparent 28%),
+    linear-gradient(145deg, #fffcf4 0%, #fff5d9 64%, #f0f8c9 100%);
+  border-color: #9dbd82;
+  box-shadow: 0 6px 17px rgba(31, 106, 67, 0.12),
+    0 24px 48px rgba(31, 106, 67, 0.17);
+}
+
+.recipe-card::before {
+  height: 7px;
+  background: linear-gradient(90deg, #1f6a43 0 34%, #83c79c 34% 66%, #ddfb82 66% 100%);
+}
+
+.recipe-name {
+  font-weight: 800;
+}
+
+.recipe-meta-pill {
+  color: #155337;
+  border-color: #94bea2;
+  background: #ddf3e5;
+}
+
+.recipe-meta-pill:nth-child(even) {
+  background: #ebf9b5;
+  border-color: #bfd771;
+}
+
+.recipe-block h4 {
+  color: #446658;
+}
+
+/* Use Soon stays amber and remains the focal urgency cue. */
+.recipe-use-soon {
+  background: #ffedc7;
+  border-color: #d99a3d;
+  border-left-color: var(--use-soon);
+}
+
+.recipe-steps li::marker {
+  color: #1f6a43;
+}
+
+.recipe-disclaimer {
+  background: #fff1d2;
+  border-color: #d3983f;
+  color: #765019;
+}
+
+.spinner {
+  border-color: #aed3bb;
+  border-top-color: #1f6a43;
+}
+
+/* Mobile form safety: all fields stack and no review content can overflow. */
+.add-form-fields,
+.qa-fields,
+.field,
+.field input,
+.quick-add,
+.quick-add-body,
+.quick-add-review,
+.qa-list,
+.qa-row {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.field input {
+  width: 100%;
+}
+
+.qa-row,
+.quick-add-body {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 640px) {
+  .add-form-fields,
+  .qa-fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .qa-row-actions {
+    flex-wrap: wrap;
+  }
+
+  .app-header {
+    background:
+      radial-gradient(circle at 92% 12%, rgba(221, 251, 130, 0.92), transparent 33%),
+      linear-gradient(145deg, #fff0c9 0%, #d9f1e2 68%, #e8f99f 100%);
+  }
+}
+
+@media (max-width: 420px) {
+  body::before,
+  body::after {
+    width: 220px;
+    height: 220px;
+    opacity: 0.48;
+  }
+
+  .recipe-meta-pill {
+    flex-basis: 100%;
+  }
+}
+
+/* ========================================================================== 
+   Final visual refinements — field alignment, premium recipe, organic hero
+   Styling only; no markup, content, state, or behavior changes.
+   ========================================================================== */
+
+/* Desktop/intermediate form alignment: proportionally widen quantity and
+   reserve equal label space so all three input tops share one baseline. */
+.add-form-fields,
+.qa-fields {
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr) minmax(0, 1.35fr);
+  align-items: start;
+}
+
+.add-form-fields > .field,
+.qa-fields > .field {
+  min-width: 0;
+}
+
+.add-form-fields > .field > span:first-child,
+.qa-fields > .field > span:first-child {
+  display: flex;
+  align-items: flex-end;
+  min-height: 2.5em;
+  line-height: 1.25;
+}
+
+.add-form-fields > .field input,
+.qa-fields > .field input {
+  width: 100%;
+  min-width: 0;
+}
+
+/* At comfortable desktop widths the labels fit naturally on one line while
+   retaining the same reserved height and therefore exact input alignment. */
+@media (min-width: 760px) {
+  .add-form-fields,
+  .qa-fields {
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr) minmax(220px, 1.4fr);
+  }
+}
+
+/* Premium generated result: visibly warm cream/lime rather than white, with
+   soft organic mint/lime illumination and a smooth accent edge. */
+.recipe-card {
+  isolation: isolate;
+  background:
+    radial-gradient(ellipse at 96% 0%, rgba(221, 251, 130, 0.78) 0%, rgba(221, 251, 130, 0.36) 24%, transparent 51%),
+    radial-gradient(ellipse at 2% 100%, rgba(221, 243, 229, 0.86) 0%, rgba(221, 243, 229, 0.34) 33%, transparent 60%),
+    linear-gradient(145deg, #fff8e8 0%, #fff4d8 58%, #f3f8cd 100%);
+  border-color: #93b883;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.72),
+    inset 0 0 0 1px rgba(221, 251, 130, 0.2),
+    0 7px 18px rgba(31, 106, 67, 0.13),
+    0 26px 54px rgba(31, 106, 67, 0.18);
+}
+
+.recipe-card::before {
+  z-index: 1;
+  height: 7px;
+  background: linear-gradient(90deg, #1f6a43 0%, #71b88d 48%, #ddfb82 100%);
+}
+
+.recipe-card > * {
+  position: relative;
+  z-index: 2;
+}
+
+.recipe-name {
+  color: #155337;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.72);
+}
+
+.recipe-meta-pill {
+  background: #d8f0e1;
+  border-color: #89b89a;
+  box-shadow: 0 3px 9px rgba(31, 106, 67, 0.09);
+}
+
+.recipe-meta-pill:nth-child(even) {
+  background: #e8f8aa;
+  border-color: #b1ce59;
+}
+
+.recipe-block {
+  color: #213b31;
+}
+
+.recipe-steps li {
+  color: #213b31;
+}
+
+/* Organic hero: overlapping curved colour areas replace the previous hard
+   diagonal sections while keeping a noticeable lime area on the right. */
+.app-header {
+  background:
+    radial-gradient(ellipse 48% 100% at 98% 38%, rgba(221, 251, 130, 0.98) 0%, rgba(221, 251, 130, 0.74) 36%, rgba(221, 251, 130, 0) 76%),
+    radial-gradient(ellipse 66% 120% at 66% 118%, rgba(192, 231, 205, 0.92) 0%, rgba(213, 241, 222, 0.66) 44%, rgba(213, 241, 222, 0) 74%),
+    radial-gradient(ellipse 58% 105% at 8% -8%, rgba(255, 232, 174, 0.92) 0%, rgba(255, 241, 207, 0.7) 51%, rgba(255, 241, 207, 0) 82%),
+    linear-gradient(135deg, #fff6df 0%, #e4f3e8 64%, #e9f8b5 100%);
+}
+
+/* Keep the right circular motif, but make it feel embedded rather than laid
+   over the hero as a separate geometric block. */
+.app-header::after {
+  width: 178px;
+  height: 178px;
+  right: -58px;
+  bottom: -90px;
+  border: 16px solid rgba(255, 252, 244, 0.22);
+  background:
+    radial-gradient(circle at 36% 34%, rgba(255, 252, 244, 0.26), transparent 38%),
+    rgba(31, 106, 67, 0.14);
+  box-shadow:
+    0 0 0 22px rgba(221, 251, 130, 0.1),
+    inset 0 0 28px rgba(31, 106, 67, 0.08);
+}
+
+/* Mobile: stack all entry fields, maintain full width, and contain every
+   Quick Add review row. Add buttons remain naturally below their fields. */
+@media (max-width: 640px) {
+  .add-form-fields,
+  .qa-fields {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    width: 100%;
+  }
+
+  .add-form-fields > .field,
+  .qa-fields > .field {
+    width: 100%;
+  }
+
+  .add-form-fields > .field > span:first-child,
+  .qa-fields > .field > span:first-child {
+    min-height: auto;
+  }
+
+  .add-form,
+  .quick-add,
+  .quick-add-body,
+  .quick-add-review,
+  .qa-list,
+  .qa-row,
+  .qa-fields,
+  .qa-row-actions {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .qa-row {
+    overflow: hidden;
+  }
+
+  .qa-row-actions .btn {
+    max-width: 100%;
+  }
+
+  .app-header {
+    background:
+      radial-gradient(ellipse 65% 90% at 100% 22%, rgba(221, 251, 130, 0.94) 0%, rgba(221, 251, 130, 0.36) 48%, transparent 74%),
+      radial-gradient(ellipse 85% 100% at 44% 112%, rgba(202, 235, 212, 0.88) 0%, transparent 68%),
+      radial-gradient(ellipse 68% 75% at 3% -3%, rgba(255, 232, 174, 0.84) 0%, transparent 76%),
+      linear-gradient(145deg, #fff6df 0%, #e0f2e6 70%, #eef9c7 100%);
+  }
+}

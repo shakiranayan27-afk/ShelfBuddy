@@ -27,7 +27,7 @@ export default function RescueMeal({ pantry, preference }) {
   }
 
   return (
-    <section className="card">
+    <section className="card rescue-card">
       <h2>Smart Meal Suggestion</h2>
       <p className="section-sub">
         Generate an AI recipe that prioritises the ingredients you need to use soon.

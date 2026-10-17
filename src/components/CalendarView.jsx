@@ -71,7 +71,7 @@ export default function CalendarView({ items }) {
   const selectedItems = selectedDate ? itemsByDate.get(selectedDate) || [] : [];
 
   return (
-    <section className="card">
+    <section className="card calendar-card">
       <div className="cal-header">
         <h2>Expiry Calendar</h2>
         <div className="cal-nav">
