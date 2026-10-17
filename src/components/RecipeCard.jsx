@@ -37,16 +37,31 @@ export default function RecipeCard({ recipe }) {
     <div className="recipe-card">
       <h3 className="recipe-name">{recipe.recipeName}</h3>
 
+      <div className="recipe-meta">
+        <span className="recipe-meta-pill">⏱ ~{recipe.cookingTimeMinutes} min</span>
+        <span className="recipe-meta-pill">
+          🍽 Serves {recipe.servings}
+        </span>
+      </div>
+
       <div className="recipe-block">
         <h4>Why this recipe</h4>
         <p>{recipe.whyRecommended}</p>
       </div>
 
-      <ListBlock
-        title="Use Soon ingredients prioritised"
-        items={recipe.useSoonPrioritised}
-        emptyText="No soon-to-expire ingredients were prioritised."
-      />
+      {/* Emphasised panel: the whole point is using these up first. */}
+      <div className="recipe-use-soon">
+        <h4>Prioritising what needs using first</h4>
+        {recipe.useSoonPrioritised && recipe.useSoonPrioritised.length > 0 ? (
+          <ul>
+            {recipe.useSoonPrioritised.map((item, i) => (
+              <li key={i}>{item}</li>
+            ))}
+          </ul>
+        ) : (
+          <p className="recipe-none">No soon-to-expire ingredients were prioritised.</p>
+        )}
+      </div>
 
       <ListBlock
         title="Pantry ingredients used"

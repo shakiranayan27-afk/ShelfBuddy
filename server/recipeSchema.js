@@ -14,6 +14,8 @@ export const RECIPE_SCHEMA = {
   properties: {
     recipeName: { type: Type.STRING },
     whyRecommended: { type: Type.STRING },
+    cookingTimeMinutes: { type: Type.INTEGER },
+    servings: { type: Type.INTEGER },
     useSoonPrioritised: { type: Type.ARRAY, items: { type: Type.STRING } },
     pantryIngredientsUsed: { type: Type.ARRAY, items: { type: Type.STRING } },
     additionalIngredients: { type: Type.ARRAY, items: { type: Type.STRING } },
@@ -23,6 +25,8 @@ export const RECIPE_SCHEMA = {
   required: [
     "recipeName",
     "whyRecommended",
+    "cookingTimeMinutes",
+    "servings",
     "useSoonPrioritised",
     "pantryIngredientsUsed",
     "additionalIngredients",
@@ -32,6 +36,8 @@ export const RECIPE_SCHEMA = {
   propertyOrdering: [
     "recipeName",
     "whyRecommended",
+    "cookingTimeMinutes",
+    "servings",
     "useSoonPrioritised",
     "pantryIngredientsUsed",
     "additionalIngredients",
@@ -70,8 +76,23 @@ export function validateRecipe(data) {
     return data[field];
   };
 
+  // Strict whole-number-in-range check. No clamping: an out-of-range,
+  // non-integer, non-finite, or missing value is rejected outright.
+  const requireIntInRange = (field, min, max) => {
+    const value = data[field];
+    if (typeof value !== "number" || !Number.isFinite(value) || !Number.isInteger(value)) {
+      throw new Error(`Field must be a whole number: ${field}`);
+    }
+    if (value < min || value > max) {
+      throw new Error(`Field out of range (${min}-${max}): ${field}`);
+    }
+    return value;
+  };
+
   const recipeName = requireString("recipeName");
   const whyRecommended = requireString("whyRecommended");
+  const cookingTimeMinutes = requireIntInRange("cookingTimeMinutes", 1, 480);
+  const servings = requireIntInRange("servings", 1, 20);
   const useSoonPrioritised = requireStringArray("useSoonPrioritised");
   const pantryIngredientsUsed = requireStringArray("pantryIngredientsUsed");
   const additionalIngredients = requireStringArray("additionalIngredients");
@@ -85,6 +106,8 @@ export function validateRecipe(data) {
   return {
     recipeName,
     whyRecommended,
+    cookingTimeMinutes,
+    servings,
     useSoonPrioritised,
     pantryIngredientsUsed,
     additionalIngredients,

@@ -64,10 +64,16 @@ RULES:
    recipe from the ingredients provided.
 5. In "useSoonPrioritised", list which of the expiring-soon ingredients the
    recipe actually uses.
-6. In "whyRecommended", briefly explain why this recipe fits, mentioning which
-   soon-to-expire ingredients it prioritises.
-7. "instructions" must be clear, numbered cooking steps (as an array of strings).
-8. "substitutions" is optional guidance; use an empty array if none.
+6. In "whyRecommended", briefly explain why this recipe fits, and clearly name
+   which soon-to-expire ingredients it prioritises.
+7. "cookingTimeMinutes": a realistic estimate of total cooking time, as a whole
+   number of minutes between 1 and 480.
+8. "servings": how many people the recipe serves, as a whole number between 1
+   and 20.
+9. "instructions": clear, numbered cooking steps as an array of strings. Keep
+   each step short and simple — one action per step, plain language, roughly 20
+   words or fewer, no sub-steps. Aim for about 4 to 8 steps.
+10. "substitutions" is optional guidance; use an empty array if none.
 
 Return ONLY the structured JSON described by the response schema.`;
 }
