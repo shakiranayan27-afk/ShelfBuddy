@@ -38,6 +38,30 @@ const ALLOWED_IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 // JSON body limit raised to 8 MB so a 5 MB image (base64 adds ~33%) fits.
 app.use(express.json({ limit: "8mb" }));
 
+// Allergy input limits (server-side validation before it reaches the prompt).
+const MAX_ALLERGY_ENTRIES = 20;
+const MAX_ALLERGY_LEN = 60;
+
+// Sanitise declared allergies: array of non-empty trimmed strings, each capped
+// in length, de-duplicated, and the whole list capped in count. Anything else
+// is dropped. Returns a clean string[].
+function sanitiseAllergies(raw) {
+  if (!Array.isArray(raw)) return [];
+  const seen = new Set();
+  const out = [];
+  for (const entry of raw) {
+    if (typeof entry !== "string") continue;
+    const v = entry.trim().slice(0, MAX_ALLERGY_LEN);
+    if (!v) continue;
+    const key = v.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(v);
+    if (out.length >= MAX_ALLERGY_ENTRIES) break;
+  }
+  return out;
+}
+
 // Simple health check so you can confirm the server is up.
 app.get("/api/health", (_req, res) => {
   res.json({ status: "ok", stage: "2A" });
@@ -49,7 +73,31 @@ app.get("/api/health", (_req, res) => {
 // Flow: re-filter expired -> split useSoon/fresh -> build prompt ->
 //       call Gemini (structured output) -> validate -> return Recipe JSON.
 app.post("/api/rescue-meal", async (req, res) => {
-  const { pantry = [], preference = "none" } = req.body || {};
+  const {
+    pantry = [],
+    preference = "none",
+    servings = 2,
+    allergies: rawAllergies = [],
+    previousRecipeName = "",
+  } = req.body || {};
+
+  // Validate / sanitise the declared allergies before they reach the prompt.
+  const allergies = sanitiseAllergies(rawAllergies);
+  const prevName =
+    typeof previousRecipeName === "string" ? previousRecipeName.trim().slice(0, 120) : "";
+
+  // Validate the requested servings up front (whole number, 1-8).
+  if (
+    typeof servings !== "number" ||
+    !Number.isInteger(servings) ||
+    servings < 1 ||
+    servings > 8
+  ) {
+    return res.status(400).json({
+      error: "BAD_SERVINGS",
+      message: "Please choose between 1 and 8 servings.",
+    });
+  }
 
   // 1. Defence in depth: independently remove expired items using each
   //    item's expiryDate. Expired food is NEVER sent to the model.
@@ -74,12 +122,15 @@ app.post("/api/rescue-meal", async (req, res) => {
   }
 
   // 3. Build the prompt (encodes all the responsible-AI rules).
-  const prompt = buildPrompt(useSoon, fresh, preference);
+  const prompt = buildPrompt(useSoon, fresh, preference, servings, {
+    allergies,
+    previousRecipeName: prevName,
+  });
 
-  // 4. Call the model and 5. validate its output.
+  // 4. Call the model and 5. validate its output (servings must match).
   try {
     const raw = await callModel(prompt, RECIPE_SCHEMA);
-    const recipe = validateRecipe(raw);
+    const recipe = validateRecipe(raw, { expectedServings: servings });
     return res.json({ recipe });
   } catch (e) {
     if (e.code === "AI_NOT_CONFIGURED") {

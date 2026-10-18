@@ -44,51 +44,69 @@ export default function RecipeCard({ recipe }) {
         </span>
       </div>
 
-      <div className="recipe-block">
-        <h4>Why this recipe</h4>
-        <p>{recipe.whyRecommended}</p>
+      {/* On wide desktops this splits into two columns: details on the left,
+          instructions on the right. Stacks on narrower screens. */}
+      <div className="recipe-split">
+        <div className="recipe-col recipe-col-details">
+          <div className="recipe-block">
+            <h4>Why this recipe</h4>
+            <p>{recipe.whyRecommended}</p>
+          </div>
+
+          {/* Emphasised panel: the whole point is using these up first. */}
+          <div className="recipe-use-soon">
+            <h4>Prioritising what needs using first</h4>
+            {recipe.useSoonPrioritised && recipe.useSoonPrioritised.length > 0 ? (
+              <ul>
+                {recipe.useSoonPrioritised.map((item, i) => (
+                  <li key={i}>{item}</li>
+                ))}
+              </ul>
+            ) : (
+              <p className="recipe-none">No soon-to-expire ingredients were prioritised.</p>
+            )}
+          </div>
+
+          <div className="recipe-block">
+            <h4>Pantry ingredients used</h4>
+            {recipe.pantryIngredientsUsed && recipe.pantryIngredientsUsed.length > 0 ? (
+              <ul>
+                {recipe.pantryIngredientsUsed.map((ing, i) => (
+                  <li key={i}>
+                    {ing.name} — {ing.amount}
+                    {ing.unit === "count" ? "" : ` ${ing.unit}`}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="recipe-none">None.</p>
+            )}
+          </div>
+
+          <ListBlock
+            title="Additional ingredients required"
+            items={recipe.additionalIngredients}
+            emptyText="None — you have everything you need."
+          />
+        </div>
+
+        <div className="recipe-col recipe-col-steps">
+          <div className="recipe-block">
+            <h4>Instructions</h4>
+            <ol className="recipe-steps">
+              {recipe.instructions.map((step, i) => (
+                <li key={i}>{stripLeadingNumber(step)}</li>
+              ))}
+            </ol>
+          </div>
+
+          <ListBlock
+            title="Optional substitutions"
+            items={recipe.substitutions}
+            emptyText="None suggested."
+          />
+        </div>
       </div>
-
-      {/* Emphasised panel: the whole point is using these up first. */}
-      <div className="recipe-use-soon">
-        <h4>Prioritising what needs using first</h4>
-        {recipe.useSoonPrioritised && recipe.useSoonPrioritised.length > 0 ? (
-          <ul>
-            {recipe.useSoonPrioritised.map((item, i) => (
-              <li key={i}>{item}</li>
-            ))}
-          </ul>
-        ) : (
-          <p className="recipe-none">No soon-to-expire ingredients were prioritised.</p>
-        )}
-      </div>
-
-      <ListBlock
-        title="Pantry ingredients used"
-        items={recipe.pantryIngredientsUsed}
-        emptyText="None."
-      />
-
-      <ListBlock
-        title="Additional ingredients required"
-        items={recipe.additionalIngredients}
-        emptyText="None — you have everything you need."
-      />
-
-      <div className="recipe-block">
-        <h4>Instructions</h4>
-        <ol className="recipe-steps">
-          {recipe.instructions.map((step, i) => (
-            <li key={i}>{stripLeadingNumber(step)}</li>
-          ))}
-        </ol>
-      </div>
-
-      <ListBlock
-        title="Optional substitutions"
-        items={recipe.substitutions}
-        emptyText="None suggested."
-      />
 
       <p className="recipe-disclaimer" role="note">
         {DISCLAIMER}

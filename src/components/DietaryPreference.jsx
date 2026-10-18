@@ -10,7 +10,7 @@ const OPTIONS = [
 
 export default function DietaryPreference({ value, onChange }) {
   return (
-    <section className="card dietary-card">
+    <section className="card dietary-card" data-tour="dietary">
       <h2>Dietary Preferences</h2>
       <p className="section-sub">
         We'll respect this when generating your Smart Meal Suggestion.

@@ -7,6 +7,9 @@
 
 import { Type } from "@google/genai";
 
+// Units ShelfBuddy can safely reason about for pantry deductions.
+export const ALLOWED_UNITS = ["g", "kg", "ml", "L", "count"];
+
 // Schema passed to Gemini via config.responseSchema. propertyOrdering keeps
 // the generated JSON fields in a predictable order.
 export const RECIPE_SCHEMA = {
@@ -17,7 +20,19 @@ export const RECIPE_SCHEMA = {
     cookingTimeMinutes: { type: Type.INTEGER },
     servings: { type: Type.INTEGER },
     useSoonPrioritised: { type: Type.ARRAY, items: { type: Type.STRING } },
-    pantryIngredientsUsed: { type: Type.ARRAY, items: { type: Type.STRING } },
+    pantryIngredientsUsed: {
+      type: Type.ARRAY,
+      items: {
+        type: Type.OBJECT,
+        properties: {
+          name: { type: Type.STRING },
+          amount: { type: Type.NUMBER },
+          unit: { type: Type.STRING, enum: ALLOWED_UNITS },
+        },
+        required: ["name", "amount", "unit"],
+        propertyOrdering: ["name", "amount", "unit"],
+      },
+    },
     additionalIngredients: { type: Type.ARRAY, items: { type: Type.STRING } },
     instructions: { type: Type.ARRAY, items: { type: Type.STRING } },
     substitutions: { type: Type.ARRAY, items: { type: Type.STRING } },
@@ -50,14 +65,30 @@ function isStringArray(value) {
   return Array.isArray(value) && value.every((v) => typeof v === "string");
 }
 
+// Normalise a unit string to one of ALLOWED_UNITS, or return null.
+// Accepts common casings: "l"/"L" -> "L", "G" -> "g", "COUNT" -> "count".
+function normaliseUnit(raw) {
+  if (typeof raw !== "string") return null;
+  const u = raw.trim().toLowerCase();
+  if (u === "g") return "g";
+  if (u === "kg") return "kg";
+  if (u === "ml") return "ml";
+  if (u === "l") return "L";
+  if (u === "count") return "count";
+  return null;
+}
+
 /**
  * Validate and normalise a parsed recipe object.
  * Throws an Error with a clear message if the shape is wrong.
  *
  * @param {any} data parsed JSON from the model
+ * @param {object} [opts]
+ * @param {number} [opts.expectedServings] if given, the recipe's servings
+ *        MUST equal this exactly, otherwise validation fails.
  * @returns {object} a clean Recipe object with all fields present
  */
-export function validateRecipe(data) {
+export function validateRecipe(data, opts = {}) {
   if (!data || typeof data !== "object") {
     throw new Error("Recipe is not an object.");
   }
@@ -89,12 +120,50 @@ export function validateRecipe(data) {
     return value;
   };
 
+  // Validate the structured pantry ingredients: { name, amount, unit }.
+  const requirePantryIngredients = () => {
+    const arr = data.pantryIngredientsUsed;
+    if (!Array.isArray(arr)) {
+      throw new Error("pantryIngredientsUsed must be an array.");
+    }
+    return arr.map((entry) => {
+      if (!entry || typeof entry !== "object") {
+        throw new Error("Each pantry ingredient must be an object.");
+      }
+      const name = typeof entry.name === "string" ? entry.name.trim() : "";
+      if (!name) {
+        throw new Error("Pantry ingredient is missing a name.");
+      }
+      const amount = entry.amount;
+      if (typeof amount !== "number" || !Number.isFinite(amount) || amount <= 0) {
+        throw new Error(`Pantry ingredient has an invalid amount: ${name}`);
+      }
+      const unit = normaliseUnit(entry.unit);
+      if (!unit) {
+        throw new Error(`Pantry ingredient has an unsupported unit: ${name}`);
+      }
+      return { name, amount, unit };
+    });
+  };
+
   const recipeName = requireString("recipeName");
   const whyRecommended = requireString("whyRecommended");
   const cookingTimeMinutes = requireIntInRange("cookingTimeMinutes", 1, 480);
   const servings = requireIntInRange("servings", 1, 20);
+
+  // Strict equality with the requested serving count when provided. The
+  // structured amounts (and later pantry deductions) depend on this.
+  if (
+    typeof opts.expectedServings === "number" &&
+    servings !== opts.expectedServings
+  ) {
+    throw new Error(
+      `Recipe servings (${servings}) does not match requested (${opts.expectedServings}).`
+    );
+  }
+
   const useSoonPrioritised = requireStringArray("useSoonPrioritised");
-  const pantryIngredientsUsed = requireStringArray("pantryIngredientsUsed");
+  const pantryIngredientsUsed = requirePantryIngredients();
   const additionalIngredients = requireStringArray("additionalIngredients");
   const instructions = requireStringArray("instructions");
   const substitutions = requireStringArray("substitutions");

@@ -2,7 +2,7 @@ import { useState } from "react";
 
 // Form to add a new pantry item: food name, expiry date, optional quantity.
 // Calls onAdd({ name, expiryDate, quantity }) when submitted with valid input.
-export default function AddItemForm({ onAdd }) {
+export default function AddItemForm({ onAdd, onLoadDemo }) {
   const [name, setName] = useState("");
   const [expiryDate, setExpiryDate] = useState("");
   const [quantity, setQuantity] = useState("");
@@ -69,9 +69,14 @@ export default function AddItemForm({ onAdd }) {
 
       {error && <p className="form-error">{error}</p>}
 
-      <button type="submit" className="btn btn-primary">
-        Add to pantry
-      </button>
+      <div className="add-form-actions">
+        <button type="submit" className="btn btn-primary">
+          Add to pantry
+        </button>
+        <button type="button" className="btn btn-secondary" onClick={onLoadDemo}>
+          Load demo pantry
+        </button>
+      </div>
     </form>
   );
 }

@@ -26,7 +26,7 @@ export function filterOutExpired(items) {
  * @returns {Promise<object>} the recipe object (7 structured fields)
  * @throws {Error} with a friendly .message on any failure
  */
-export async function generateRescueMeal(pantry, preference) {
+export async function generateRescueMeal(pantry, preference, servings = 2, options = {}) {
   // Safety filter #1: never send expired items to the backend.
   const usablePantry = filterOutExpired(pantry).map((item) => ({
     name: item.name,
@@ -34,12 +34,22 @@ export async function generateRescueMeal(pantry, preference) {
     quantity: item.quantity || "",
   }));
 
+  const allergies = Array.isArray(options.allergies) ? options.allergies : [];
+  const previousRecipeName =
+    typeof options.previousRecipeName === "string" ? options.previousRecipeName : "";
+
   let res;
   try {
     res = await fetch("/api/rescue-meal", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ pantry: usablePantry, preference }),
+      body: JSON.stringify({
+        pantry: usablePantry,
+        preference,
+        servings,
+        allergies,
+        previousRecipeName,
+      }),
     });
   } catch {
     // Network / server unreachable.

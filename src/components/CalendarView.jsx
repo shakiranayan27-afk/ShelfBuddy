@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import Icon from "./Icon.jsx";
 import { classify, describeExpiry, STATUS } from "../lib/expiry.js";
 
 // Read-only monthly expiry calendar. Reuses the existing pantry `items` and
@@ -71,18 +72,18 @@ export default function CalendarView({ items }) {
   const selectedItems = selectedDate ? itemsByDate.get(selectedDate) || [] : [];
 
   return (
-    <section className="card calendar-card">
+    <section className="card calendar-card" data-tour="calendar">
       <div className="cal-header">
         <h2>Expiry Calendar</h2>
         <div className="cal-nav">
           <button type="button" className="btn btn-secondary" onClick={() => stepMonth(-1)} aria-label="Previous month">
-            ‹
+            <Icon name="chevronLeft" />
           </button>
           <span className="cal-month">
             {MONTHS[view.month]} {view.year}
           </span>
           <button type="button" className="btn btn-secondary" onClick={() => stepMonth(1)} aria-label="Next month">
-            ›
+            <Icon name="chevronRight" />
           </button>
           <button type="button" className="btn btn-secondary cal-today" onClick={goToday}>
             Today

@@ -59,3 +59,61 @@ export function savePreference(preference) {
     // ignore
   }
 }
+
+const ALLERGIES_KEY = "shelfbuddy.allergies";
+
+/**
+ * Load the saved allergy selections.
+ * @returns {{ list: string[], other: string }}
+ */
+export function loadAllergies() {
+  try {
+    const raw = localStorage.getItem(ALLERGIES_KEY);
+    if (!raw) return { list: [], other: "" };
+    const parsed = JSON.parse(raw);
+    return {
+      list: Array.isArray(parsed.list) ? parsed.list : [],
+      other: typeof parsed.other === "string" ? parsed.other : "",
+    };
+  } catch {
+    return { list: [], other: "" };
+  }
+}
+
+/**
+ * Save the allergy selections.
+ * @param {{ list: string[], other: string }} allergies
+ */
+export function saveAllergies(allergies) {
+  try {
+    localStorage.setItem(ALLERGIES_KEY, JSON.stringify(allergies));
+  } catch {
+    // ignore
+  }
+}
+
+const TOUR_SEEN_KEY = "shelfbuddy.tourSeen";
+
+/**
+ * Has the user already seen (completed or skipped) the onboarding tour?
+ * @returns {boolean}
+ */
+export function loadTourSeen() {
+  try {
+    return localStorage.getItem(TOUR_SEEN_KEY) === "true";
+  } catch {
+    // If storage is unavailable, treat as seen so we never trap the user.
+    return true;
+  }
+}
+
+/**
+ * Mark the onboarding tour as seen.
+ */
+export function saveTourSeen() {
+  try {
+    localStorage.setItem(TOUR_SEEN_KEY, "true");
+  } catch {
+    // ignore
+  }
+}

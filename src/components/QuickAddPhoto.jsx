@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { detectFoodFromImage } from "../lib/api.js";
+import Icon from "./Icon.jsx";
 
 // "Quick Add from Photo" — a collapsible panel inside My Pantry.
 //
@@ -83,9 +84,11 @@ export default function QuickAddPhoto({ onAdd }) {
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
       >
-        <span>📷 Quick Add from Photo</span>
+        <span>
+          <Icon name="camera" /> Quick Add from Photo
+        </span>
         <span className="quick-add-chevron" aria-hidden="true">
-          {open ? "▲" : "▼"}
+          {open ? <Icon name="chevronUp" /> : <Icon name="chevronDown" />}
         </span>
       </button>
 
