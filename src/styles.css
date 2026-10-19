@@ -106,6 +106,10 @@
     /* Warning / attention — amber only */
     --color-amber-warning: #9a5600;
     --color-amber-surface: #ffe7b8;
+    /* Lighter golden amber used only for the "Use Soon" pantry row left accent
+       so it reads clearly warm/golden and stays distinct from the expired red.
+       Badge text keeps the darker --color-amber-warning for contrast. */
+    --color-amber-accent: #eaa52f;
 
     /* Expired / destructive / error — red only */
     --color-red-expired: #a92f38;
@@ -1160,7 +1164,38 @@
     transform: translateY(-1px);
   }
 
+  /* Icon + text sit side by side; the icon is fixed-size so the name column
+     flexes and the row's four-track grid alignment is unchanged. */
   .item-main {
+    min-width: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  /* Soft rounded ingredient tile to the left of the name. Flat, friendly, and
+     drawn from the app palette. Decorative only. */
+  .ingredient-icon {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: var(--radius-control);
+    background: linear-gradient(150deg, var(--color-cream) 0%, var(--color-mint) 100%);
+    box-shadow: inset 0 0 0 1px rgba(13, 68, 42, 0.08);
+  }
+
+  .ingredient-icon svg {
+    width: 2rem;
+    height: 2rem;
+    display: block;
+  }
+
+  /* The name/quantity stack keeps its original two-line column layout. */
+  .item-text {
     min-width: 0;
     display: flex;
     flex-direction: column;
@@ -1947,7 +1982,7 @@
 @layer states {
   /* Expiry row accents (left rule only; palette lives in badges). */
   .item-row.status-use-soon {
-    border-left-color: var(--color-amber-warning);
+    border-left-color: var(--color-amber-accent);
   }
 
   .item-row.status-fresh {
@@ -2035,6 +2070,18 @@
 
     .item-main {
       grid-area: item;
+      gap: var(--space-2);
+    }
+
+    /* Slightly smaller ingredient tile on narrow screens for compact rows. */
+    .ingredient-icon {
+      width: 2.4rem;
+      height: 2.4rem;
+    }
+
+    .ingredient-icon svg {
+      width: 1.75rem;
+      height: 1.75rem;
     }
 
     /* item-side is display:contents, so its children place individually. */

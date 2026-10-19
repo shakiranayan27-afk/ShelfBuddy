@@ -1,4 +1,5 @@
 import { describeExpiry, STATUS } from "../lib/expiry.js";
+import IngredientIcon from "./IngredientIcon.jsx";
 
 // A single pantry item: name, optional quantity, a coloured status badge
 // (Expired / Use Soon / Fresh) with an expiry description, and a remove button.
@@ -12,8 +13,11 @@ export default function PantryItemRow({ item, onDelete }) {
   return (
     <li className={`item-row status-${status}`}>
       <div className="item-main">
-        <span className="item-name">{item.name}</span>
-        {item.quantity && <span className="item-qty">{item.quantity}</span>}
+        <IngredientIcon name={item.name} />
+        <span className="item-text">
+          <span className="item-name">{item.name}</span>
+          {item.quantity && <span className="item-qty">{item.quantity}</span>}
+        </span>
       </div>
 
       <div className="item-side">
