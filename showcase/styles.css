@@ -1,0 +1,242 @@
+/* ==========================================================================
+   ShelfBuddy — Mobile Showcase (presentation shell only)
+
+   This stylesheet styles ONLY the presentation page and the CSS-only phone
+   frame. It does not touch, import, or recreate any ShelfBuddy app styling —
+   the live app renders inside the iframe with its own CSS untouched.
+
+   Layout model:
+     - The outer page is pinned to the viewport and never scrolls.
+     - On desktop/laptop a realistic smartphone shell is centred; the live app
+       scrolls INSIDE the phone screen.
+     - On real phones the frame is stripped and the app fills the screen.
+   ========================================================================== */
+
+:root {
+  /* Phone geometry — a 390 x 844 content viewport (modern phone logical size)
+     so ShelfBuddy's own mobile breakpoints render as the true mobile layout. */
+  --app-w: 390px;
+  --app-h: 844px;
+
+  --frame-pad: 10px;          /* graphite bezel thickness (slimmed) */
+  --frame-radius: 56px;       /* outer corner radius */
+  --screen-radius: 46px;      /* inner screen corner radius */
+
+  /* ShelfBuddy-themed presentation palette (kept subtle, not neon). */
+  --bg-cream: #fff6e6;
+  --bg-mint: #e4f4e8;
+  --bg-leaf: #cfe9cf;
+  --graphite-1: #2b2f33;
+  --graphite-2: #15181b;
+  --label-ink: #2f5540;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  font-family: "Manrope", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    sans-serif;
+  /* Lock the presentation page to the viewport: it must not scroll. */
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  /* Sophisticated themed backdrop: warm cream -> pale mint -> soft leaf green.
+     A soft radial lift adds depth without big blobs; the phone stays the
+     focal point. */
+  background-color: var(--bg-mint);
+  background-image:
+    radial-gradient(
+      120% 90% at 50% 18%,
+      rgba(255, 255, 255, 0.55) 0%,
+      rgba(255, 255, 255, 0) 55%
+    ),
+    linear-gradient(
+      165deg,
+      var(--bg-cream) 0%,
+      var(--bg-mint) 52%,
+      var(--bg-leaf) 100%
+    );
+}
+
+/* -------------------------------------------------------------- Stage */
+.stage {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(10px, 2vh, 22px);
+  padding: 24px;
+}
+
+.stage__label {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--label-ink);
+  opacity: 0.6;
+}
+
+/* ------------------------------------------------------- Phone device
+   The whole .phone is scaled as a single unit via a CSS custom property set
+   by showcase.js (default 1). transform-origin is the centre so it stays
+   centred while shrinking on short screens. Aspect ratio is never distorted
+   because width/height are fixed and only a uniform scale() is applied. */
+.phone {
+  --scale: 1;
+  flex: 0 0 auto;
+  transform: scale(var(--scale));
+  transform-origin: center center;
+}
+
+.phone__frame {
+  position: relative;
+  width: calc(var(--app-w) + var(--frame-pad) * 2);
+  height: calc(var(--app-h) + var(--frame-pad) * 2);
+  padding: var(--frame-pad);
+  border-radius: var(--frame-radius);
+  /* Slim dark graphite/black shell with a faint edge highlight. */
+  background: linear-gradient(145deg, var(--graphite-1), var(--graphite-2));
+  box-shadow:
+    inset 0 0 0 2px rgba(255, 255, 255, 0.06),
+    inset 0 0 6px 2px rgba(0, 0, 0, 0.55),
+    0 2px 4px rgba(0, 0, 0, 0.25),
+    0 30px 70px rgba(20, 40, 28, 0.32),
+    0 10px 30px rgba(20, 40, 28, 0.22);
+}
+
+/* Thin inner bezel + subtle screen inset. */
+.phone__screen {
+  position: relative;
+  width: var(--app-w);
+  height: var(--app-h);
+  border-radius: var(--screen-radius);
+  overflow: hidden;
+  background: #000;
+  box-shadow:
+    inset 0 0 0 2px rgba(0, 0, 0, 0.9),
+    inset 0 0 14px rgba(0, 0, 0, 0.6);
+}
+
+/* The live app. Fills the screen exactly; scrolls internally like a real app. */
+.phone__app {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: #fff;
+}
+
+/* Dynamic-island-style housing, centred near the top of the screen. */
+.phone__island {
+  position: absolute;
+  top: calc(var(--frame-pad) + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 108px;
+  height: 30px;
+  border-radius: 999px;
+  background: #05070a;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+  z-index: 2;
+}
+
+/* A tiny camera dot inside the island for realism. */
+.phone__island::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  width: 8px;
+  height: 8px;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #39414d 0%, #05070a 70%);
+  box-shadow: inset 0 0 0 1px rgba(90, 120, 160, 0.25);
+}
+
+/* Subtle bottom home indicator. */
+.phone__home-indicator {
+  position: absolute;
+  bottom: calc(var(--frame-pad) + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 132px;
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.55);
+  z-index: 2;
+}
+
+/* ==========================================================================
+   Real small phones: strip the decorative frame and let the live app fill
+   the device. Desktop -> prototype presentation; phone -> genuine full app.
+   Uses dvh so mobile browser chrome doesn't clip the app.
+   ========================================================================== */
+@media (max-width: 500px) {
+  body {
+    position: fixed;
+    inset: 0;
+    background: #fff;
+  }
+
+  .stage {
+    padding: 0;
+    gap: 0;
+    display: block;
+  }
+
+  .stage__label {
+    display: none;
+  }
+
+  /* Neutralise all device-frame styling. */
+  .phone {
+    --scale: 1;
+    transform: none;
+    width: 100vw;
+    height: 100dvh;
+  }
+
+  .phone__frame {
+    width: 100vw;
+    height: 100dvh;
+    padding: 0;
+    border-radius: 0;
+    background: #fff;
+    box-shadow: none;
+  }
+
+  .phone__screen {
+    width: 100vw;
+    height: 100dvh;
+    border-radius: 0;
+    box-shadow: none;
+    background: #fff;
+  }
+
+  /* Hide the fake camera/island and home indicator on real devices. */
+  .phone__island,
+  .phone__home-indicator {
+    display: none;
+  }
+}
+
+/* Respect reduced motion: the scale transition (if any) is purely cosmetic. */
+@media (prefers-reduced-motion: reduce) {
+  .phone {
+    transition: none;
+  }
+}

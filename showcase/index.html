@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light" />
+    <title>ShelfBuddy — Mobile Showcase</title>
+    <meta
+      name="description"
+      content="Interactive mobile prototype showcase of the live ShelfBuddy app."
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <!--
+      Presentation shell only. This page embeds the real, live ShelfBuddy
+      web app in an iframe sized to a phone viewport so the app's own
+      responsive mobile layout renders authentically. Nothing about the
+      embedded app is recreated or modified here.
+    -->
+    <main class="stage" role="main">
+      <!-- CSS-only smartphone device. The .phone element is scaled as a
+           whole (never distorted) by showcase.js to fit short viewports. -->
+      <div class="phone" id="phone">
+        <div class="phone__frame">
+          <!-- Dynamic-island-style sensor housing -->
+          <div class="phone__island" aria-hidden="true"></div>
+
+          <!-- Screen inset holds the live app -->
+          <div class="phone__screen">
+            <iframe
+              class="phone__app"
+              src="https://shelfbuddy-mvp.onrender.com"
+              title="Live ShelfBuddy app running in a mobile phone frame"
+              loading="eager"
+              allow="camera; clipboard-read; clipboard-write"
+              referrerpolicy="no-referrer-when-downgrade"
+            ></iframe>
+          </div>
+
+          <!-- Bottom home indicator -->
+          <div class="phone__home-indicator" aria-hidden="true"></div>
+        </div>
+      </div>
+
+      <!-- Small, subtle label beneath the phone. Hidden on real phones. -->
+      <p class="stage__label" aria-hidden="true">ShelfBuddy</p>
+    </main>
+
+    <script src="./showcase.js" defer></script>
+  </body>
+</html>
