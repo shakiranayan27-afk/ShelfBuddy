@@ -802,6 +802,759 @@
     border-radius: var(--radius-panel);
   }
 
+  /* "+ Add food" accordion. On DESKTOP it is always open and shows no
+     disclosure affordance — the entry region simply renders inline, exactly
+     as before. The mobile breakpoint turns it into a real collapsible.
+     The <details> content is force-shown here so a closed details attribute
+     (default) still reveals the form on desktop. */
+  .pantry-entry-summary {
+    display: none;
+  }
+
+  .pantry-entry-accordion > .pantry-entry {
+    display: flex !important;
+  }
+
+  /* Hide the default disclosure triangle entirely. */
+  .pantry-entry-summary::-webkit-details-marker {
+    display: none;
+  }
+  .pantry-entry-summary {
+    list-style: none;
+  }
+
+  /* Mobile-only CHROME is hidden on desktop. The summary cards, profile
+     identity, and calendar icon treatment are now SHARED across both layouts,
+     so they are not hidden here. */
+  .m-header,
+  .m-bottom-nav,
+  .m-profile-top,
+  .m-profile-bottom,
+  .m-smartmeal-only {
+    display: none;
+  }
+
+  /* --- Desktop: "Your Pantry" + "Items expiring soon" summary cards ---
+     On desktop these sit above the pantry list inside the pantry card, in a
+     compact two-column arrangement (they stack on narrower widths). On mobile
+     they are reordered/spaced by the mobile rules. */
+  .pantry-mobile-summary {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--space-4);
+    align-items: start;
+  }
+
+  @media (max-width: 900px) {
+    .pantry-mobile-summary {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  /* Shared summary card chrome (used on both desktop and mobile). */
+  .m-summary-card,
+  .m-expiring-card {
+    background: linear-gradient(180deg, #fffdf4 0%, #f1f9ec 100%);
+    border: 1px solid #dcebd5;
+    border-radius: 18px;
+    box-shadow: 0 6px 16px rgba(13, 68, 42, 0.06);
+    padding: var(--space-4);
+  }
+
+  .m-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-3);
+  }
+  .m-card-head h2 {
+    margin: 0;
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    color: var(--text-primary);
+  }
+  /* Header row is a real button so the chevron navigates. */
+  .m-card-head-btn {
+    width: 100%;
+    appearance: none;
+    background: transparent;
+    border: none;
+    padding: var(--space-1) 0;
+    margin: 0 0 var(--space-3);
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+  }
+  .m-card-head-btn:hover .m-card-chevron {
+    transform: translateX(3px);
+  }
+  .m-card-head-btn:focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+  .m-card-chevron {
+    color: var(--color-muted);
+    font-size: 1.4rem;
+    line-height: 1;
+    transition: transform var(--motion-fast) var(--motion-ease);
+  }
+
+  /* Your Pantry: four compact category tiles. */
+  .m-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-2);
+  }
+  .m-summary-cat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    min-width: 0;
+  }
+  .m-summary-tile {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 14px;
+    background: var(--color-white);
+    box-shadow: inset 0 0 0 1px rgba(13, 68, 42, 0.06);
+    margin-bottom: 2px;
+  }
+  .m-summary-tile .ingredient-icon {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    box-shadow: none;
+    border-radius: 14px;
+  }
+  .m-summary-tile .ingredient-icon svg {
+    width: 62%;
+    height: 62%;
+  }
+  .m-summary-count {
+    font-size: 1.1rem;
+    font-weight: var(--font-weight-extrabold);
+    color: var(--color-forest-green);
+    line-height: 1.1;
+  }
+  .m-summary-label {
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+    text-align: center;
+    line-height: 1.1;
+  }
+
+  /* Items expiring soon: compact rows (icon + name + amber detail + chevron). */
+  .m-expiring-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .m-expiring-list > li {
+    display: block;
+  }
+  .m-expiring-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    width: 100%;
+    padding: var(--space-2);
+    background: var(--color-white);
+    border: 1px solid transparent;
+    border-radius: 14px;
+    box-shadow: 0 2px 8px rgba(13, 68, 42, 0.05);
+    font: inherit;
+    text-align: left;
+    color: inherit;
+    cursor: pointer;
+    transition: border-color var(--motion-fast) var(--motion-ease),
+      box-shadow var(--motion-fast) var(--motion-ease),
+      transform var(--motion-fast) var(--motion-ease);
+  }
+  .m-expiring-row:hover {
+    border-color: var(--color-leaf-green);
+    box-shadow: 0 4px 12px rgba(13, 68, 42, 0.1);
+    transform: translateY(-1px);
+  }
+  .m-expiring-row:focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+  .m-expiring-row .ingredient-icon {
+    width: 2.4rem;
+    height: 2.4rem;
+    flex: 0 0 auto;
+  }
+  .m-expiring-row .ingredient-icon svg {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+  .m-expiring-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+  .m-expiring-name {
+    font-weight: var(--font-weight-bold);
+    color: var(--text-primary);
+    overflow-wrap: anywhere;
+  }
+  .m-expiring-detail {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: #c6821a; /* amber, distinct from the expired red */
+  }
+  .m-expiring-chevron {
+    color: var(--color-muted);
+    font-size: 1.3rem;
+    flex: 0 0 auto;
+  }
+
+  /* --- Shared profile identity card (desktop sidebar + mobile Profile tab) ---
+     Rendered once in App; one instance, one shared state. */
+  .m-profile-identity {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    background: linear-gradient(180deg, #fffdf4 0%, #f1f9ec 100%);
+    border: 1px solid #dcebd5;
+    border-radius: 18px;
+  }
+  .m-profile-avatar {
+    position: relative;
+    flex: 0 0 auto;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    overflow: hidden;
+    padding: 0;
+    border: 2px solid var(--color-white);
+    background: var(--color-mint);
+    box-shadow: 0 2px 8px rgba(13, 68, 42, 0.12);
+    cursor: pointer;
+  }
+  .m-profile-avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .m-profile-avatar-edit {
+    position: absolute;
+    right: -2px;
+    bottom: -2px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--color-forest-green);
+    color: var(--color-cream);
+    border: 2px solid var(--color-white);
+  }
+  .m-profile-file {
+    display: none;
+  }
+  .m-profile-identity-body {
+    min-width: 0;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .m-profile-name {
+    font-size: 1.1rem;
+    font-weight: var(--font-weight-bold);
+    color: var(--text-primary);
+    overflow-wrap: anywhere;
+  }
+  .m-profile-edit-link {
+    align-self: flex-start;
+    padding: 0;
+    background: transparent;
+    border: none;
+    color: var(--color-emerald);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    cursor: pointer;
+  }
+  .m-profile-name-field input {
+    width: 100%;
+  }
+  .m-profile-identity-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    margin-top: var(--space-2);
+  }
+  .m-profile-remove-photo {
+    padding: 0;
+    background: transparent;
+    border: none;
+    color: var(--color-red-expired);
+    font-size: var(--font-size-sm);
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  /* The large profile identity card in the sidebar is a MOBILE-ONLY element
+     (it belongs to the mobile Profile tab). On desktop the top-right avatar
+     button is the single profile entry point, so hide the sidebar card here.
+     The mobile breakpoint reveals it inside the Profile view. */
+  .profile-identity-card {
+    display: none;
+  }
+
+  /* The "All pantry items" heading is a quiet section label; on desktop it
+     reads as a normal sub-heading above the list. */
+  .pantry-list-heading {
+    margin: 0;
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-bold);
+    color: var(--text-primary);
+  }
+
+  /* Scroll targets for the summary-card chevrons: leave a little breathing
+     room above them when scrolled into view, and suppress the focus outline
+     from the programmatic focus() (the flash gives the feedback instead). */
+  .pantry-list-heading,
+  [data-tour="use-first"] {
+    scroll-margin-top: var(--space-5);
+  }
+  .pantry-list-heading:focus,
+  [data-tour="use-first"]:focus {
+    outline: none;
+  }
+
+  /* Brief highlight pulse applied when a chevron navigates to a section, so
+     the action is perceptible even when the scroll distance is small. */
+  .nav-flash {
+    animation: nav-flash-pulse 1s ease-out;
+    border-radius: var(--radius-sm);
+  }
+  @keyframes nav-flash-pulse {
+    0% { box-shadow: 0 0 0 0 rgba(39, 166, 78, 0); background-color: rgba(194, 242, 74, 0); }
+    25% { box-shadow: 0 0 0 4px rgba(39, 166, 78, 0.25); background-color: rgba(194, 242, 74, 0.28); }
+    100% { box-shadow: 0 0 0 0 rgba(39, 166, 78, 0); background-color: rgba(194, 242, 74, 0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .nav-flash { animation: none; }
+  }
+
+  /* ------------------------------------------ Desktop top-right profile button
+     Fixed circular avatar control + compact modal panel. Hidden on mobile (the
+     mobile Profile tab owns this on small screens). */
+  .dp-root {
+    position: fixed;
+    top: var(--space-5);
+    right: var(--space-5);
+    z-index: 55;
+  }
+
+  .dp-avatar-btn {
+    position: relative;
+    display: inline-flex;
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    border-radius: 50%;
+    overflow: visible;
+    background: var(--surface-card);
+    border: 2px solid var(--color-leaf-green);
+    box-shadow: 0 4px 14px rgba(13, 68, 42, 0.18);
+    cursor: pointer;
+  }
+  .dp-avatar-btn:hover {
+    box-shadow: 0 6px 18px rgba(13, 68, 42, 0.26);
+  }
+  .dp-avatar-btn:focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+  .dp-avatar-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+  }
+  .dp-avatar-btn > svg {
+    border-radius: 50%;
+  }
+
+  /* Tooltip on hover/focus. */
+  .dp-tooltip {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    padding: 4px 10px;
+    border-radius: var(--radius-pill);
+    background: var(--color-forest-green);
+    color: var(--color-cream);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    white-space: nowrap;
+    opacity: 0;
+    transform: translateY(-2px);
+    pointer-events: none;
+    transition: opacity var(--motion-fast) var(--motion-ease),
+      transform var(--motion-fast) var(--motion-ease);
+  }
+  .dp-avatar-btn:hover .dp-tooltip,
+  .dp-avatar-btn:focus-visible .dp-tooltip {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Modal panel. */
+  .dp-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 70;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+    padding: var(--space-5);
+    background: rgba(22, 54, 43, 0.4);
+  }
+  .dp-panel {
+    width: min(420px, 100%);
+    max-height: calc(100dvh - var(--space-5) * 2);
+    overflow: auto;
+    background: var(--surface-page);
+    border-radius: var(--radius-panel);
+    box-shadow: var(--shadow-overlay);
+    padding: var(--space-5);
+  }
+  .dp-panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-4);
+  }
+  .dp-panel-title {
+    margin: 0;
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-extrabold);
+    color: var(--color-forest-green);
+  }
+  .dp-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--color-muted);
+    cursor: pointer;
+  }
+  .dp-close:hover {
+    background: var(--color-mint);
+    color: var(--color-forest-green);
+  }
+  .dp-close:focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+  .dp-panel-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  .dp-tour-btn {
+    width: 100%;
+  }
+
+  /* ------------------------------------------------- Welcome / splash screen
+     Full-screen first-open welcome. Covers the app entirely (opaque, vibrant
+     hero gradient) so nothing shows through, then fades out. Works on desktop
+     and mobile. */
+  .splash {
+    position: fixed;
+    inset: 0;
+    z-index: 1100; /* above tour (1000), sheet (60), bottom nav (40) */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Generous top/bottom safe-area padding so the larger wordmark always
+       clears the Dynamic Island / status bar; allow vertical scroll as a
+       safety valve on very short viewports so nothing is clipped. */
+    padding: max(var(--space-8), env(safe-area-inset-top, 0px) + var(--space-6))
+      var(--space-6)
+      max(var(--space-6), env(safe-area-inset-bottom, 0px) + var(--space-5));
+    overflow-x: hidden;
+    overflow-y: auto;
+    cursor: pointer;
+    /* Opaque vibrant backdrop: warm cream -> soft yellow -> fresh mint ->
+       brighter lime, matching the hero band. */
+    background:
+      radial-gradient(120% 80% at 50% 10%, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 55%),
+      linear-gradient(150deg, var(--color-cream) 0%, #fff0bf 28%, var(--color-mint) 66%, #c8f26e 100%);
+    opacity: 1;
+    transition: opacity var(--motion-base, 300ms) var(--motion-ease, ease),
+      transform var(--motion-base, 300ms) var(--motion-ease, ease);
+  }
+
+  .splash.is-leaving {
+    opacity: 0;
+    transform: scale(1.02);
+    pointer-events: none;
+  }
+
+  .splash-inner {
+    position: relative;
+    z-index: 1; /* above the scattered leaves/sparkles */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--space-2);
+    max-width: 520px;
+    width: 100%;
+  }
+
+  /* Brand lockup stacked: pantry/leaf icon centred ABOVE the large wordmark,
+     matching the reference splash. */
+  .splash-brand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-1);
+  }
+
+  .splash-brand .hero-brand-icon {
+    width: clamp(52px, 12vw, 84px);
+    height: auto;
+  }
+
+  .splash-brand .hero-wordmark {
+    /* ~12% larger than before (2.8/4.8rem -> 3.15/5.4rem). */
+    font-size: clamp(3.15rem, 1.7rem + 7.6vw, 5.4rem);
+    line-height: 1;
+  }
+
+  .splash-slogan {
+    margin: var(--space-2) 0 0;
+    font-size: clamp(1.1rem, 0.7rem + 2vw, 1.75rem);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-forest-green);
+    line-height: var(--line-height-snug);
+  }
+
+  .splash-subline {
+    margin: 2px 0 0;
+    font-size: clamp(0.95rem, 0.75rem + 0.8vw, 1.2rem);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-emerald);
+  }
+
+  .splash-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-top: var(--space-4);
+    padding: var(--space-3) var(--space-7);
+    border-radius: var(--radius-pill);
+    background: linear-gradient(135deg, var(--color-emerald) 0%, var(--color-forest-green) 100%);
+    color: var(--color-cream);
+    font-weight: var(--font-weight-bold);
+    font-size: var(--font-size-lg);
+    box-shadow: 0 10px 24px rgba(13, 68, 42, 0.32);
+    cursor: pointer;
+  }
+  .splash-cta .icon {
+    color: var(--color-lime);
+  }
+  .splash-cta:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 14px 30px rgba(13, 68, 42, 0.38);
+  }
+
+  .splash-illustration {
+    /* ~18% larger than before (78vw/340px -> 88vw/400px) and nudged upward by
+       trimming the top margin so the composition feels fuller. */
+    width: min(88vw, 400px);
+    margin-top: var(--space-3);
+  }
+  .splash-illustration .pantry-illustration {
+    width: 100%;
+    height: auto;
+  }
+
+  /* Decorative leaves fanned toward the edges + corners.
+     The span handles POSITION + a gentle looping drift; the inner <svg> holds
+     each leaf's fixed resting rotation/flip so the two transforms don't fight.
+     Durations/delays vary per leaf so they never move in sync. */
+  .splash-leaf {
+    position: absolute;
+    z-index: 0;
+    opacity: 0.9;
+    pointer-events: none;
+    animation: splash-leaf-float 6s ease-in-out infinite alternate;
+    will-change: transform;
+  }
+  .splash-leaf--1 { top: 8%;  left: 8%;  width: 46px; animation-duration: 6.5s; animation-delay: -0.4s; }
+  .splash-leaf--2 { top: 10%; right: 9%; width: 54px; animation-duration: 7.4s; animation-delay: -1.8s; }
+  .splash-leaf--3 { top: 38%; left: 5%;  width: 40px; animation-duration: 5.4s; animation-delay: -3.1s; }
+  .splash-leaf--4 { top: 40%; right: 5%; width: 44px; animation-duration: 8s;   animation-delay: -0.9s; }
+  .splash-leaf--5 { bottom: 14%; left: 10%; width: 60px; animation-duration: 7s; animation-delay: -2.5s; }
+  .splash-leaf--6 { bottom: 12%; right: 10%; width: 64px; animation-duration: 6.2s; animation-delay: -4.2s; }
+
+  /* Fixed resting orientation lives on the svg (left intact during drift). */
+  .splash-leaf--1 svg { transform: rotate(-25deg); }
+  .splash-leaf--2 svg { transform: rotate(35deg) scaleX(-1); }
+  .splash-leaf--3 svg { transform: rotate(-10deg); }
+  .splash-leaf--4 svg { transform: rotate(18deg) scaleX(-1); }
+  .splash-leaf--5 svg { transform: rotate(-35deg); }
+  .splash-leaf--6 svg { transform: rotate(40deg) scaleX(-1); }
+
+  /* Very small up/down + left/right drift with a slight rotation. */
+  @keyframes splash-leaf-float {
+    0%   { transform: translate(0, 0) rotate(0deg); }
+    50%  { transform: translate(4px, -7px) rotate(3deg); }
+    100% { transform: translate(-3px, 5px) rotate(-3deg); }
+  }
+
+  /* Decorative white sparkles — soft twinkle (fade + slight scale). */
+  .splash-spark {
+    position: absolute;
+    z-index: 0;
+    opacity: 0.9;
+    pointer-events: none;
+    filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.7));
+    animation: splash-twinkle 3s ease-in-out infinite;
+    will-change: opacity, transform;
+  }
+  .splash-spark--1 { top: 16%; left: 24%; width: 16px; animation-duration: 2.8s; animation-delay: -0.3s; }
+  .splash-spark--2 { top: 20%; right: 20%; width: 22px; animation-duration: 3.6s; animation-delay: -1.5s; }
+  .splash-spark--3 { bottom: 30%; left: 18%; width: 18px; animation-duration: 3.1s; animation-delay: -2.2s; }
+  .splash-spark--4 { bottom: 26%; right: 16%; width: 14px; animation-duration: 2.6s; animation-delay: -0.9s; }
+
+  @keyframes splash-twinkle {
+    0%, 100% { opacity: 0.45; transform: scale(0.85); }
+    50%      { opacity: 1;    transform: scale(1.1); }
+  }
+
+  /* Very subtle slow bob on the pantry illustration. */
+  .splash-illustration {
+    animation: splash-bob 5s ease-in-out infinite alternate;
+    will-change: transform;
+  }
+  @keyframes splash-bob {
+    0%   { transform: translateY(0); }
+    100% { transform: translateY(-8px); }
+  }
+
+  /* Soft glow pulse on the CTA every few seconds (shadow only — no layout
+     shift). The base shadow is restored in the keyframe's rest state. */
+  .splash-cta {
+    animation: splash-cta-glow 3.6s ease-in-out infinite;
+  }
+  @keyframes splash-cta-glow {
+    0%, 100% { box-shadow: 0 10px 24px rgba(13, 68, 42, 0.32); }
+    50%      { box-shadow: 0 10px 24px rgba(13, 68, 42, 0.32), 0 0 22px 4px rgba(39, 166, 78, 0.45); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .splash {
+      transition: opacity 120ms linear;
+    }
+    .splash.is-leaving {
+      transform: none;
+    }
+    /* Disable all decorative splash motion when reduced motion is requested.
+       Elements keep their resting position/orientation. */
+    .splash-leaf,
+    .splash-spark,
+    .splash-illustration,
+    .splash-cta {
+      animation: none !important;
+    }
+    .splash-spark {
+      opacity: 0.9;
+    }
+  }
+
+  /* ----------------------------------------------- Edit Item bottom sheet
+     Shared by mobile and desktop. A dimmed backdrop with a rounded sheet that
+     docks to the bottom on mobile and centres as a compact modal on wider
+     screens (handled in the responsive layer). */
+  .sheet-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-4);
+    background: rgba(22, 54, 43, 0.5);
+  }
+
+  .sheet {
+    width: min(460px, 100%);
+    max-height: 90dvh;
+    overflow: auto;
+    background: var(--surface-card);
+    border-radius: var(--radius-panel);
+    box-shadow: var(--shadow-overlay);
+    padding: var(--space-5);
+  }
+
+  .sheet-grabber {
+    display: none; /* shown on mobile as a drag handle cue */
+    width: 40px;
+    height: 4px;
+    border-radius: 999px;
+    background: var(--color-divider);
+    margin: 0 auto var(--space-3);
+  }
+
+  .sheet-title {
+    margin: 0 0 var(--space-4);
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-extrabold);
+    color: var(--color-forest-green);
+  }
+
+  .sheet-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .sheet-actions {
+    display: flex;
+    gap: var(--space-3);
+  }
+
+  .sheet-actions .btn {
+    flex: 1 1 auto;
+  }
+
+  /* Quiet, separated removal action so it isn't triggered by accident. */
+  .sheet-remove {
+    align-self: center;
+    margin-top: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    background: transparent;
+    border: none;
+    color: var(--color-red-expired);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
   /* The three personalisation subsections read as one sage/cream family.
      The family surface is applied to the right column via its own panel in
      a later task; here each keeps a light sage inset separated by whitespace,
@@ -1174,6 +1927,31 @@
     gap: var(--space-3);
   }
 
+  /* The whole row is the edit trigger (cursor, hover lift). */
+  .item-row {
+    cursor: pointer;
+  }
+  .item-row:focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
+  /* Explicit pencil / Edit affordance in the action area. */
+  .btn-edit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-1);
+    border-radius: var(--radius-sm);
+    color: var(--color-control-border);
+    transition: color var(--motion-fast) var(--motion-ease),
+      background var(--motion-fast) var(--motion-ease);
+  }
+  .btn-edit:hover {
+    color: var(--color-forest-green);
+    background: var(--color-mint);
+  }
+
   /* Soft rounded ingredient tile to the left of the name. Flat, friendly, and
      drawn from the app palette. Decorative only. */
   .ingredient-icon {
@@ -1226,7 +2004,11 @@
     overflow-wrap: anywhere;
   }
 
-  .item-side .btn-delete {
+  /* Edit + Delete grouped in the shared action cell (4th grid track). */
+  .item-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
     justify-self: end;
   }
 
@@ -1761,7 +2543,7 @@
     display: flex;
     flex-direction: column;
     gap: var(--space-1);
-    min-height: 84px;
+    min-height: 96px;
     padding: var(--space-2);
     background: var(--surface-card);
     border: var(--border-hairline);
@@ -1782,35 +2564,10 @@
     color: var(--text-primary);
   }
 
+  /* Text chips replaced by ingredient illustrations on BOTH desktop and
+     mobile, so the calendar reads the same everywhere. */
   .cal-chips {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    min-width: 0;
-  }
-
-  .cal-chip {
-    font-size: var(--font-size-xs);
-    padding: 1px var(--space-2);
-    border-radius: var(--radius-sm);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .cal-chip.status-use-soon {
-    background: var(--status-use-soon-surface);
-    color: var(--status-use-soon-ink);
-  }
-
-  .cal-chip.status-fresh {
-    background: var(--status-fresh-surface);
-    color: var(--status-fresh-ink);
-  }
-
-  .cal-chip.status-expired {
-    background: var(--status-expired-surface);
-    color: var(--status-expired-ink);
+    display: none;
   }
 
   .cal-more {
@@ -1818,7 +2575,125 @@
     color: var(--text-secondary);
   }
 
-  /* Dots are mobile-only (revealed in the responsive layer). */
+  /* Ingredient cell content — shared markup, different presentation per size.
+     DESKTOP/TABLET (base): a compact vertical list of entries, each with an
+     icon + ingredient name (truncated) + quantity, plus "+N more". A status
+     underline keeps fresh/use-soon/expired meaning. */
+  .cal-icons {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2px;
+    min-width: 0;
+    width: 100%;
+    border-bottom: 2.5px solid transparent;
+    padding-bottom: 2px;
+  }
+  .cal-icons.status-use-soon { border-bottom-color: var(--color-amber-accent); }
+  .cal-icons.status-fresh { border-bottom-color: var(--color-fresh-green); }
+  .cal-icons.status-expired { border-bottom-color: var(--color-red-expired); }
+
+  .cal-entry {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    min-width: 0;
+  }
+  .cal-icon {
+    display: inline-flex;
+    flex: 0 0 auto;
+    width: 1.6rem;
+    height: 1.6rem;
+    border-radius: 50%;
+    background: var(--color-white);
+    box-shadow: 0 0 0 1.5px var(--surface-card);
+    overflow: hidden;
+  }
+  .cal-icon .ingredient-icon {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    box-shadow: none;
+    border-radius: 50%;
+  }
+  .cal-icon .ingredient-icon svg {
+    width: 1.15rem;
+    height: 1.15rem;
+  }
+  .cal-entry-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    line-height: 1.05;
+  }
+  .cal-entry-name {
+    font-size: 0.72rem;
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+  .cal-entry-qty {
+    font-size: 0.66rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .cal-icon-more {
+    font-size: 0.66rem;
+    font-weight: var(--font-weight-bold);
+    color: var(--text-secondary);
+    padding-left: calc(1.6rem + 4px);
+  }
+
+  /* Detail panel uses the friendly date ("19 October") + the ingredient
+     illustration, name, quantity, expiry description and status badge on BOTH
+     layouts. The verbose "Expiring on YYYY-MM-DD" span is hidden. */
+  .cal-detail-date-desktop {
+    display: none;
+  }
+  .cal-detail-date-mobile {
+    display: inline;
+  }
+
+  .cal-detail-icon {
+    display: inline-flex;
+    width: 2.4rem;
+    height: 2.4rem;
+    flex: 0 0 auto;
+  }
+  .cal-detail-icon .ingredient-icon {
+    width: 100%;
+    height: 100%;
+  }
+  .cal-detail-icon .ingredient-icon svg {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+  .cal-detail-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+  .cal-detail-expiry {
+    display: block;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+  }
+  .cal-detail-expiry.status-use-soon { color: #c6821a; }
+  .cal-detail-expiry.status-fresh { color: var(--color-leaf-green); }
+  .cal-detail-expiry.status-expired { color: var(--color-red-expired); }
+
+  /* The detail item becomes a left-aligned icon + text + badge row. */
+  .cal-detail-item {
+    justify-content: flex-start;
+  }
+
+  /* Dots are no longer used (icons replace them) — hidden everywhere. */
   .cal-dots {
     display: none;
     align-items: center;
@@ -2003,14 +2878,17 @@
     box-shadow: inset 0 0 0 2px var(--color-forest-green);
   }
 
+  /* Selected day: a soft pale mint/lime fill with a dark forest-green outline.
+     Clearly indicates selection without the previous neon-lime loudness. */
   .cal-cell.is-selected {
-    background: var(--color-lime);
-    box-shadow: inset 0 0 0 2px var(--color-leaf-green);
+    background: #e7f6d8;
+    box-shadow: inset 0 0 0 2px var(--color-forest-green);
   }
 
   .cal-cell.is-today.is-selected {
+    background: #e7f6d8;
     box-shadow: inset 0 0 0 2px var(--color-forest-green),
-      inset 0 0 0 4px var(--color-lime);
+      inset 0 0 0 4px #cfeaa6;
   }
 
   @keyframes sb-spin {
@@ -2095,22 +2973,132 @@
       justify-self: start;
     }
 
-    .item-side .btn-delete {
+    .item-actions {
       grid-area: action;
       justify-self: end;
     }
 
     /* Calendar switches to dots + count on small screens. */
-    .cal-chips {
+    /* Mobile Calendar: ingredient illustrations replace the text chips and
+       the old dot + count. The cell shows the day number plus up to two
+       overlapping ingredient icons and a compact "+N" for the rest. */
+    .cal-chips,
+    .cal-dots {
       display: none;
     }
 
-    .cal-dots {
-      display: flex;
+    .cal-cell {
+      min-height: 62px;
+      align-items: center;
+      gap: 2px;
+      padding: 4px 2px;
+      text-align: center;
     }
 
-    .cal-cell {
-      min-height: 56px;
+    .cal-daynum {
+      font-size: var(--font-size-xs);
+    }
+
+    /* Mobile stays COMPACT ICON-ONLY: horizontal row of up to two overlapping
+       icons + "+N". The per-item name/quantity text is hidden here. */
+    .cal-icons {
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      width: auto;
+      padding-left: 6px;
+      padding-bottom: 2px;
+    }
+
+    .cal-entry {
+      display: inline-flex;
+      align-items: center;
+      gap: 0;
+      margin-left: -6px; /* overlap between entries' icons */
+    }
+
+    /* Hide name/quantity on mobile — icon only. */
+    .cal-entry-text {
+      display: none;
+    }
+
+    .cal-icon {
+      width: 1.6rem;
+      height: 1.6rem;
+    }
+    .cal-icon .ingredient-icon svg {
+      width: 1.15rem;
+      height: 1.15rem;
+    }
+
+    .cal-icon-more {
+      margin-left: 2px;
+      padding-left: 0;
+      font-size: 0.6rem;
+    }
+
+    /* --- Selected-day details below the calendar (mobile). --- */
+    .cal-detail-date-desktop {
+      display: none;
+    }
+    .cal-detail-date-mobile {
+      display: inline;
+    }
+
+    .cal-detail-item {
+      justify-content: flex-start;
+      gap: var(--space-3);
+    }
+
+    .cal-detail-icon {
+      display: inline-flex;
+      width: 2.4rem;
+      height: 2.4rem;
+      flex: 0 0 auto;
+    }
+    .cal-detail-icon .ingredient-icon {
+      width: 100%;
+      height: 100%;
+    }
+    .cal-detail-icon .ingredient-icon svg {
+      width: 1.75rem;
+      height: 1.75rem;
+    }
+
+    .cal-detail-text {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      flex: 1 1 auto;
+    }
+
+    .cal-detail-name {
+      font-weight: var(--font-weight-bold);
+      color: var(--text-primary);
+    }
+
+    /* Expiry description line, coloured by status (amber Use Soon stays the
+       lighter golden accent, distinct from the expired red). */
+    .cal-detail-expiry {
+      display: block;
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+    }
+    .cal-detail-expiry.status-use-soon {
+      color: #c6821a;
+    }
+    .cal-detail-expiry.status-fresh {
+      color: var(--color-leaf-green);
+    }
+    .cal-detail-expiry.status-expired {
+      color: var(--color-red-expired);
+    }
+
+    /* Hide the redundant Pantry/Calendar segmented control on the mobile
+       Calendar view — the bottom nav owns view switching. */
+    .calendar-workspace .pantry-tabs {
+      display: none;
     }
 
     .pantry-controls {
@@ -2129,6 +3117,689 @@
 
     .discard-expired-btn {
       width: 100%;
+    }
+
+    /* ========================================================================
+       MOBILE APP-STYLE REDESIGN (<=560px only; desktop is untouched)
+       Hierarchy: compact header -> search -> Your Pantry summary -> expiring
+       soon -> "+ Add food" -> All pantry items -> dietary/allergies/smart meal
+       -> recipe, with a fixed bottom nav.
+       ======================================================================== */
+
+    /* --- Hide the desktop hero, show the compact brand header. --- */
+    .hero-band {
+      display: none;
+    }
+
+    /* Desktop top-right profile control is hidden on mobile (the Profile
+       bottom-nav tab owns this on small screens). */
+    .dp-root {
+      display: none;
+    }
+
+    .m-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-3);
+      width: min(100% - calc(var(--content-gutter) * 2), var(--content-max));
+      margin: 0 auto;
+      /* Top safe-area spacing so the wordmark always clears the Dynamic Island
+         / status bar. Falls back to a generous fixed inset on devices (and the
+         showcase phone frame) that report no safe-area. */
+      /* Pushed down ~12px further so the Dynamic Island never competes with
+         the wordmark, leaf, or help icon. */
+      padding-top: max(calc(var(--space-8) + 12px), env(safe-area-inset-top, 0px) + var(--space-5));
+      padding-bottom: var(--space-2);
+    }
+
+    .m-header-brand {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      min-width: 0;
+    }
+
+    /* Reuse the shared brand icon/wordmark classes but size them for a compact
+       app header (the desktop clamp sizes are overridden only here). */
+    .m-header .hero-brand-icon {
+      width: 34px;
+      height: 34px;
+      flex: 0 0 auto;
+    }
+
+    .m-header .hero-wordmark {
+      font-size: 1.9rem;
+      line-height: 1;
+    }
+
+    .m-header-leaves {
+      display: inline-flex;
+      align-items: flex-start;
+      gap: 2px;
+      flex: 0 0 auto;
+    }
+
+    /* --- Page spacing: leave room for the fixed bottom nav. --- */
+    .app {
+      padding-bottom: calc(68px + env(safe-area-inset-bottom, 0px));
+    }
+
+    .app-main {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+
+    /* --- Large rounded search bar directly under the header. --- */
+    /* Pull the search (which lives inside the pantry card) visually up by
+       reordering the pantry card's children on mobile. */
+    .pantry-card {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+    .pantry-card > .pantry-controls { order: 1; }
+    .pantry-card > .pantry-mobile-summary { order: 2; display: flex; flex-direction: column; gap: var(--space-4); }
+    .pantry-card > .pantry-entry-accordion { order: 3; }
+    .pantry-card > [data-tour="use-first"] { order: 4; }
+    .pantry-card > .pantry-list-heading { order: 5; }
+    .pantry-card > .item-list,
+    .pantry-card > .empty-state { order: 6; }
+    /* The summary card already reads "Your Pantry", and the list has its own
+       "All pantry items" heading, so the generic "My Pantry" h2 and its long
+       sub-line are redundant on the compact mobile layout. */
+    .pantry-card > h2 { display: none; }
+    .pantry-card > .section-sub { display: none; }
+
+    .pantry-controls {
+      padding: 0;
+    }
+
+    .pantry-search {
+      width: 100%;
+      background: var(--color-white);
+      border: 1px solid var(--color-divider);
+      border-radius: var(--radius-pill);
+      box-shadow: 0 6px 16px rgba(13, 68, 42, 0.08);
+      padding: 0.35rem 0.5rem;
+    }
+
+    .pantry-search-input {
+      min-height: 3rem;
+      border: none;
+      background: transparent;
+      font-size: var(--font-size-md);
+    }
+
+    .pantry-search-input:focus-visible {
+      outline: none;
+    }
+
+    .pantry-search:focus-within {
+      border-color: var(--color-leaf-green);
+      box-shadow: 0 6px 18px rgba(13, 68, 42, 0.14);
+    }
+
+    /* --- Shared card chrome for the mobile summary/expiring cards. --- */
+    .m-summary-card,
+    .m-expiring-card {
+      display: block;
+      width: 100%;
+      background: linear-gradient(180deg, #fffdf4 0%, #f1f9ec 100%);
+      border: 1px solid #dcebd5;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(13, 68, 42, 0.07);
+      padding: var(--space-4);
+    }
+
+    .m-card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-3);
+    }
+
+    .m-card-head h2 {
+      margin: 0;
+      font-size: 1.15rem;
+      font-weight: var(--font-weight-bold);
+      color: var(--text-primary);
+    }
+
+    /* The card header is a real button — reset native chrome, full width, with
+       tap/focus feedback so the chevron reads as actionable. */
+    .m-card-head-btn {
+      width: 100%;
+      appearance: none;
+      background: transparent;
+      border: none;
+      padding: var(--space-1) 0;
+      margin: 0 0 var(--space-3);
+      cursor: pointer;
+      border-radius: var(--radius-sm);
+    }
+    .m-card-head-btn:active {
+      opacity: 0.6;
+    }
+    .m-card-head-btn:focus-visible {
+      outline: 3px solid var(--color-focus);
+      outline-offset: 2px;
+    }
+    .m-card-head-btn .m-card-chevron {
+      transition: transform var(--motion-fast) var(--motion-ease);
+    }
+    .m-card-head-btn:hover .m-card-chevron {
+      transform: translateX(3px);
+    }
+
+    .m-card-chevron {
+      color: var(--color-muted);
+      font-size: 1.4rem;
+      line-height: 1;
+    }
+
+    /* --- "Your Pantry" four-category summary. --- */
+    .m-summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-2);
+    }
+
+    .m-summary-cat {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .m-summary-tile {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      border-radius: 16px;
+      background: var(--color-white);
+      box-shadow: inset 0 0 0 1px rgba(13, 68, 42, 0.06);
+      margin-bottom: 2px;
+    }
+
+    /* The reused ingredient tile sits flush inside the category tile. */
+    .m-summary-tile .ingredient-icon {
+      width: 100%;
+      height: 100%;
+      background: transparent;
+      box-shadow: none;
+      border-radius: 16px;
+    }
+
+    .m-summary-tile .ingredient-icon svg {
+      width: 60%;
+      height: 60%;
+    }
+
+    .m-summary-count {
+      font-size: 1.1rem;
+      font-weight: var(--font-weight-extrabold);
+      color: var(--color-forest-green);
+      line-height: 1.1;
+    }
+
+    .m-summary-label {
+      font-size: 0.72rem;
+      color: var(--text-secondary);
+      text-align: center;
+      line-height: 1.1;
+    }
+
+    /* --- "Items expiring soon". --- */
+    .m-expiring-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .m-expiring-row {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-2);
+      background: var(--color-white);
+      border-radius: 14px;
+      box-shadow: 0 2px 8px rgba(13, 68, 42, 0.05);
+    }
+
+    .m-expiring-row .ingredient-icon {
+      width: 2.4rem;
+      height: 2.4rem;
+      flex: 0 0 auto;
+    }
+    .m-expiring-row .ingredient-icon svg {
+      width: 1.75rem;
+      height: 1.75rem;
+    }
+
+    .m-expiring-text {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      flex: 1 1 auto;
+    }
+
+    .m-expiring-name {
+      font-weight: var(--font-weight-bold);
+      color: var(--text-primary);
+      overflow-wrap: anywhere;
+    }
+
+    /* Amber expiry text — clearly warm/golden, distinct from the expired red. */
+    .m-expiring-detail {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      color: #c6821a;
+    }
+
+    .m-expiring-chevron {
+      color: var(--color-muted);
+      font-size: 1.3rem;
+      flex: 0 0 auto;
+    }
+
+    /* --- "+ Add food" accordion becomes a real compact collapsible. --- */
+    .pantry-entry-accordion {
+      border: 1px solid var(--color-divider);
+      border-radius: 16px;
+      background: var(--color-white);
+      overflow: hidden;
+    }
+
+    .pantry-entry-summary {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-3) var(--space-4);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-forest-green);
+      cursor: pointer;
+      list-style: none;
+      min-height: 3rem;
+    }
+
+    .pantry-entry-summary-plus {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.6rem;
+      height: 1.6rem;
+      border-radius: 50%;
+      background: var(--color-mint);
+      color: var(--color-forest-green);
+      font-size: 1.1rem;
+      line-height: 1;
+    }
+
+    /* On mobile the content follows the native <details> open state, so undo
+       the desktop force-show. */
+    .pantry-entry-accordion > .pantry-entry {
+      display: none !important;
+    }
+    .pantry-entry-accordion[open] > .pantry-entry {
+      display: flex !important;
+    }
+
+    /* --- Dietary / Allergies / Smart Meal: clean full-width solid cards.
+       (They already stack below 1100px; this just tidies spacing. Palette is
+       already solid sage / cream / pistachio — no gradients added.) --- */
+    .col-side {
+      gap: var(--space-4);
+    }
+
+    /* --- Fixed app-style bottom navigation. --- */
+    .m-bottom-nav {
+      display: flex;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 40;
+      justify-content: space-around;
+      align-items: stretch;
+      gap: var(--space-1);
+      padding: 6px 8px calc(6px + env(safe-area-inset-bottom, 0px));
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: saturate(1.2) blur(6px);
+      border-top: 1px solid var(--color-divider);
+      box-shadow: 0 -4px 18px rgba(13, 68, 42, 0.08);
+    }
+
+    .m-nav-item {
+      flex: 1 1 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      padding: 6px 4px;
+      border-radius: 14px;
+      color: var(--color-muted);
+      background: transparent;
+      min-width: 0;
+    }
+
+    .m-nav-item.active {
+      color: var(--color-forest-green);
+      background: var(--color-mint);
+    }
+
+    .m-nav-icon {
+      display: inline-flex;
+    }
+
+    .m-nav-label {
+      font-size: 0.68rem;
+      font-weight: var(--font-weight-semibold);
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    /* ========================================================================
+       FOUR-TAB MOBILE VIEWS — show only the active view's sections.
+       data-mview on a section declares which tab it belongs to; .app's
+       data-mobile-view says which tab is active. Anything tagged for another
+       tab is hidden. (Desktop never sees these rules.)
+       ======================================================================== */
+    .app[data-mobile-view="pantry"] [data-mview="smartMeal"],
+    .app[data-mobile-view="pantry"] [data-mview="profile"],
+    .app[data-mobile-view="smartMeal"] [data-mview="pantry"],
+    .app[data-mobile-view="smartMeal"] [data-mview="profile"],
+    .app[data-mobile-view="profile"] [data-mview="pantry"],
+    .app[data-mobile-view="profile"] [data-mview="smartMeal"] {
+      display: none;
+    }
+
+    /* Reveal the mobile-only view chrome when its tab is active. */
+    .app[data-mobile-view="profile"] .m-profile-top,
+    .app[data-mobile-view="profile"] .m-profile-bottom {
+      display: block;
+    }
+    /* The profile identity card is shown inside the mobile Profile tab (it is
+       hidden on desktop by the base rule). */
+    .app[data-mobile-view="profile"] .profile-identity-card {
+      display: block;
+    }
+    /* When another tab is active, keep it hidden like other profile sections. */
+    .app:not([data-mobile-view="profile"]) .profile-identity-card {
+      display: none;
+    }
+    .app[data-mobile-view="smartMeal"] .m-smartmeal-only {
+      display: block;
+    }
+
+    /* Hide the Pantry/Calendar segmented control on mobile — the bottom nav
+       owns view switching now. */
+    .pantry-tabs-row {
+      display: none;
+    }
+
+    /* The side column is a plain stack on mobile (no card gaps between the
+       split views). */
+    .col-side {
+      gap: var(--space-4);
+    }
+
+    /* --- Smart Meal tab intro --- */
+    .m-smartmeal-intro {
+      margin-bottom: var(--space-4);
+    }
+    .m-smartmeal-title {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: var(--font-weight-extrabold);
+      color: var(--color-forest-green);
+    }
+    .m-smartmeal-sub {
+      margin: var(--space-1) 0 var(--space-4);
+      color: var(--text-secondary);
+    }
+    .m-smartmeal-block-title,
+    .m-profile-group-title {
+      margin: 0 0 var(--space-2);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-bold);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-secondary);
+    }
+    .m-smartmeal-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+    }
+    .m-smartmeal-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+      padding: 4px 10px 4px 4px;
+      background: var(--color-white);
+      border: 1px solid var(--color-divider);
+      border-radius: var(--radius-pill);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      color: var(--text-primary);
+    }
+    .m-smartmeal-chip .ingredient-icon {
+      width: 1.8rem;
+      height: 1.8rem;
+    }
+    .m-smartmeal-chip .ingredient-icon svg {
+      width: 1.3rem;
+      height: 1.3rem;
+    }
+    .m-smartmeal-empty {
+      margin: 0;
+      color: var(--text-secondary);
+    }
+    .m-smartmeal-prefs {
+      display: flex;
+      gap: var(--space-3);
+      margin-top: var(--space-4);
+    }
+    .m-smartmeal-pref {
+      flex: 1 1 0;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      padding: var(--space-3);
+      background: var(--color-white);
+      border: 1px solid var(--color-divider);
+      border-radius: 14px;
+      min-width: 0;
+    }
+    .m-smartmeal-pref-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-secondary);
+    }
+    .m-smartmeal-pref-value {
+      font-weight: var(--font-weight-bold);
+      color: var(--text-primary);
+      overflow-wrap: anywhere;
+    }
+
+    /* --- Profile tab --- */
+    .m-profile-title {
+      margin: var(--space-2) 0 var(--space-4);
+      font-size: 1.5rem;
+      font-weight: var(--font-weight-extrabold);
+      color: var(--color-forest-green);
+    }
+    .m-profile-group {
+      margin-top: var(--space-5);
+    }
+    .m-profile-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-3) var(--space-4);
+      background: var(--color-white);
+      border: 1px solid var(--color-divider);
+      border-radius: 14px;
+    }
+    .m-profile-row-value {
+      font-weight: var(--font-weight-bold);
+      color: var(--color-forest-green);
+    }
+    .m-profile-hint {
+      margin: var(--space-2) 0 0;
+      font-size: var(--font-size-sm);
+      color: var(--text-secondary);
+    }
+    .m-profile-tour {
+      width: 100%;
+    }
+
+    /* --- Profile identity (avatar + name + edit) --- */
+    .m-profile-identity {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-4);
+      margin-bottom: var(--space-4);
+      background: linear-gradient(180deg, #fffdf4 0%, #f1f9ec 100%);
+      border: 1px solid #dcebd5;
+      border-radius: 18px;
+    }
+
+    .m-profile-avatar {
+      position: relative;
+      flex: 0 0 auto;
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      overflow: hidden;
+      padding: 0;
+      border: 2px solid var(--color-white);
+      background: var(--color-mint);
+      box-shadow: 0 2px 8px rgba(13, 68, 42, 0.12);
+      cursor: pointer;
+    }
+
+    .m-profile-avatar-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .m-profile-avatar-edit {
+      position: absolute;
+      right: -2px;
+      bottom: -2px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--color-forest-green);
+      color: var(--color-cream);
+      border: 2px solid var(--color-white);
+    }
+
+    .m-profile-file {
+      display: none;
+    }
+
+    .m-profile-identity-body {
+      min-width: 0;
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .m-profile-name {
+      font-size: 1.15rem;
+      font-weight: var(--font-weight-bold);
+      color: var(--text-primary);
+      overflow-wrap: anywhere;
+    }
+
+    .m-profile-edit-link {
+      align-self: flex-start;
+      padding: 0;
+      background: transparent;
+      border: none;
+      color: var(--color-emerald);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      cursor: pointer;
+    }
+
+    .m-profile-name-field input {
+      width: 100%;
+    }
+
+    .m-profile-identity-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-2);
+      margin-top: var(--space-2);
+    }
+
+    .m-profile-remove-photo {
+      padding: 0;
+      background: transparent;
+      border: none;
+      color: var(--color-red-expired);
+      font-size: var(--font-size-sm);
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    .m-profile-food-heading {
+      margin-top: var(--space-2);
+    }
+
+    /* --- Edit Item sheet docks to the bottom on mobile. --- */
+    .sheet-backdrop {
+      align-items: flex-end;
+      padding: 0;
+    }
+    .sheet {
+      width: 100%;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+      padding-bottom: calc(var(--space-5) + env(safe-area-inset-bottom, 0px));
+      max-height: 85dvh;
+    }
+    .sheet-grabber {
+      display: block;
+    }
+
+    /* Slightly larger, clearer category illustrations in the summary. */
+    .m-summary-tile .ingredient-icon svg {
+      width: 72%;
+      height: 72%;
+    }
+
+    /* Demote "Discard all expired": a small, left-aligned secondary action
+       rather than a dominant full-width button. It stays easy to find just
+       under the search within the pantry controls. */
+    .discard-expired-btn {
+      width: auto;
+      align-self: flex-start;
+      padding: var(--space-1) var(--space-3);
+      font-size: var(--font-size-sm);
+    }
+
+    /* Slightly tighter pantry rows so a long list feels compact, while
+       keeping icons, badges, expiry text and the delete button tappable. */
+    .item-row {
+      padding: var(--space-2) var(--space-3);
     }
   }
 

@@ -28,8 +28,13 @@
 
           <!-- Screen inset holds the live app -->
           <div class="phone__screen">
+            <!-- The src is set by showcase.js so it can be environment-aware:
+                 local dev server when opened on localhost, otherwise the live
+                 Render MVP. A production fallback src is included so the frame
+                 still works even if scripts are blocked. -->
             <iframe
               class="phone__app"
+              id="phone-app"
               src="https://shelfbuddy-mvp.onrender.com"
               title="Live ShelfBuddy app running in a mobile phone frame"
               loading="eager"

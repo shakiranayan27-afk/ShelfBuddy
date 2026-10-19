@@ -68,6 +68,11 @@ export default function Tour({ open, onClose, onRequestView }) {
     let raf2 = 0;
     const t = setTimeout(() => {
       const el = document.querySelector(step.target);
+      // If the target lives inside a collapsed <details> (the mobile
+      // "+ Add food" accordion), open it so the step can highlight it.
+      // Presentation-only: does not alter any app logic.
+      const details = el?.closest("details");
+      if (details && !details.open) details.open = true;
       if (el) {
         el.scrollIntoView({
           behavior: prefersReducedMotion() ? "auto" : "smooth",

@@ -16,6 +16,33 @@
   var TARGET_VH = 0.92; // phone should occupy ~92% of the viewport height
   var WIDTH_MARGIN = 32; // min horizontal breathing room (px)
 
+  // App URLs the phone can embed.
+  var LOCAL_APP_URL = "http://localhost:5173"; // Vite dev server
+  var PROD_APP_URL = "https://shelfbuddy-mvp.onrender.com"; // live Render MVP
+
+  /* ---------------------------------------------------------------------
+     Environment-aware iframe source.
+
+     When this showcase is opened from localhost / 127.0.0.1 (local testing),
+     embed the local dev server so uncommitted changes are visible inside the
+     phone. Anywhere else (e.g. the deployed Render static site) keeps the
+     live Render MVP. The production URL is never replaced by localhost.
+     --------------------------------------------------------------------- */
+  (function setAppSource() {
+    var frame = document.getElementById("phone-app");
+    if (!frame) return;
+
+    var host = window.location.hostname;
+    var isLocal = host === "localhost" || host === "127.0.0.1" || host === "[::1]";
+    var target = isLocal ? LOCAL_APP_URL : PROD_APP_URL;
+
+    // Only reassign if it differs, so we don't force an extra reload in
+    // production where the HTML already points at the live app.
+    if (frame.getAttribute("src") !== target) {
+      frame.setAttribute("src", target);
+    }
+  })();
+
   var phone = document.getElementById("phone");
   if (!phone) return;
 

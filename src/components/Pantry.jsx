@@ -66,7 +66,15 @@ function UseFirstSummary({ items }) {
 // "My Pantry" section: add form plus the sorted list of items.
 // Sorting (Use Soon -> Fresh -> Expired) is applied at render time so the
 // list always reflects the current date.
-export default function Pantry({ items, onAdd, onDelete, onLoadDemo, onDiscardExpired }) {
+export default function Pantry({
+  items,
+  onAdd,
+  onDelete,
+  onLoadDemo,
+  onDiscardExpired,
+  onEditItem,
+  mobileSummary = null,
+}) {
   // Live search query — filters the DISPLAYED list only; never mutates data.
   const [query, setQuery] = useState("");
 
@@ -87,6 +95,13 @@ export default function Pantry({ items, onAdd, onDelete, onLoadDemo, onDiscardEx
         Add what you have at home. Items that need using soon rise to the top.
       </p>
 
+      {/* Mobile-only summary/expiring slot. Rendered here (a direct child of
+          the pantry card) so the mobile `order` rules can sequence it between
+          the search and the "+ Add food" section. Hidden on desktop via CSS.
+          These are App-owned presentational components passed in — one source
+          of truth, no duplicated data. */}
+      {mobileSummary && <div className="pantry-mobile-summary">{mobileSummary}</div>}
+
       {/* Grouped so the onboarding tour always has a stable "Use First"
           target, even when the pantry is empty on a first visit. */}
       <div data-tour="use-first">
@@ -95,43 +110,59 @@ export default function Pantry({ items, onAdd, onDelete, onLoadDemo, onDiscardEx
       </div>
 
       {/* Entry region: Quick Add + Manual Add, grouped by a subtle surface
-          shift (not another hard box). */}
-      <div className="pantry-entry">
-        <div data-tour="quick-add">
-          <QuickAddPhoto onAdd={onAdd} />
-        </div>
-
-        <AddItemForm onAdd={onAdd} onLoadDemo={onLoadDemo} />
-      </div>
-
-      {/* List region: search integrates naturally above the records. */}
-      {items.length > 0 && (
-        <div className="pantry-controls">
-          <div className="pantry-search">
-            <span className="pantry-search-icon" aria-hidden="true">
-              <Icon name="search" />
-            </span>
-            <input
-              type="text"
-              className="pantry-search-input"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search pantry…"
-              aria-label="Search pantry"
-            />
+          shift (not another hard box). Wrapped in a <details> that behaves as
+          a compact "+ Add food" accordion on mobile; on desktop CSS forces it
+          permanently open with no disclosure affordance, so the desktop layout
+          and behaviour are unchanged. Same single set of controls either way —
+          no duplicate form. */}
+      <details className="pantry-entry-accordion" id="add-food">
+        <summary className="pantry-entry-summary">
+          <span className="pantry-entry-summary-plus" aria-hidden="true">+</span>
+          Add food
+        </summary>
+        <div className="pantry-entry">
+          <div data-tour="quick-add">
+            <QuickAddPhoto onAdd={onAdd} />
           </div>
 
-          {expiredCount > 0 && (
-            <button
-              type="button"
-              className="btn btn-secondary discard-expired-btn"
-              onClick={onDiscardExpired}
-            >
-              Discard all expired ({expiredCount})
-            </button>
-          )}
+          <AddItemForm onAdd={onAdd} onLoadDemo={onLoadDemo} />
         </div>
-      )}
+      </details>
+
+      {/* List region: search integrates naturally above the records. The
+          search field always renders (even when the pantry is empty) so the
+          mobile layout can surface it directly under the header; the discard
+          button still only appears when there are expired items. */}
+      <div className="pantry-controls" data-tour="search">
+        <div className="pantry-search">
+          <span className="pantry-search-icon" aria-hidden="true">
+            <Icon name="search" />
+          </span>
+          <input
+            type="text"
+            className="pantry-search-input"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search your pantry..."
+            aria-label="Search pantry"
+          />
+        </div>
+
+        {expiredCount > 0 && (
+          <button
+            type="button"
+            className="btn btn-secondary discard-expired-btn"
+            onClick={onDiscardExpired}
+          >
+            Discard all expired ({expiredCount})
+          </button>
+        )}
+      </div>
+
+      {/* Heading for the detailed list (reads as "All pantry items" on mobile,
+          where summary cards sit above it; visually a plain section heading on
+          desktop). */}
+      {items.length > 0 && <h3 className="pantry-list-heading">All pantry items</h3>}
 
       {items.length === 0 ? (
         <p className="empty-state">
@@ -142,7 +173,12 @@ export default function Pantry({ items, onAdd, onDelete, onLoadDemo, onDiscardEx
       ) : (
         <ul className="item-list">
           {visible.map((item) => (
-            <PantryItemRow key={item.id} item={item} onDelete={onDelete} />
+            <PantryItemRow
+              key={item.id}
+              item={item}
+              onDelete={onDelete}
+              onEdit={onEditItem}
+            />
           ))}
         </ul>
       )}

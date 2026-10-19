@@ -92,6 +92,42 @@ export function saveAllergies(allergies) {
   }
 }
 
+const PROFILE_KEY = "shelfbuddy.profile";
+
+// Default local profile. This is NOT an account — just a display name and an
+// optional photo (data URL) stored locally, like every other preference.
+export const DEFAULT_PROFILE = { name: "", photo: "" };
+
+/**
+ * Load the local profile (display name + optional photo data URL).
+ * @returns {{ name: string, photo: string }}
+ */
+export function loadProfile() {
+  try {
+    const raw = localStorage.getItem(PROFILE_KEY);
+    if (!raw) return { ...DEFAULT_PROFILE };
+    const parsed = JSON.parse(raw);
+    return {
+      name: typeof parsed.name === "string" ? parsed.name : "",
+      photo: typeof parsed.photo === "string" ? parsed.photo : "",
+    };
+  } catch {
+    return { ...DEFAULT_PROFILE };
+  }
+}
+
+/**
+ * Save the local profile.
+ * @param {{ name: string, photo: string }} profile
+ */
+export function saveProfile(profile) {
+  try {
+    localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
+  } catch {
+    // Storage may be full (photos can be large) or blocked; ignore for MVP.
+  }
+}
+
 const TOUR_SEEN_KEY = "shelfbuddy.tourSeen";
 
 /**

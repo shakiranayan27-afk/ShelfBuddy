@@ -1,5 +1,14 @@
 import { useEffect, useState } from "react";
 import Hero from "./components/Hero.jsx";
+import MobileHeader from "./components/MobileHeader.jsx";
+import PantrySummary from "./components/PantrySummary.jsx";
+import ExpiringSoon from "./components/ExpiringSoon.jsx";
+import MobileBottomNav from "./components/MobileBottomNav.jsx";
+import SmartMealIntro from "./components/SmartMealIntro.jsx";
+import { MobileProfileTop, MobileProfileBottom, ProfileIdentity } from "./components/MobileProfile.jsx";
+import DesktopProfileButton from "./components/DesktopProfileButton.jsx";
+import EditItemSheet from "./components/EditItemSheet.jsx";
+import SplashScreen from "./components/SplashScreen.jsx";
 import Pantry from "./components/Pantry.jsx";
 import PantryTabs from "./components/PantryTabs.jsx";
 import CalendarView from "./components/CalendarView.jsx";
@@ -16,8 +25,9 @@ import {
   savePreference,
   loadAllergies,
   saveAllergies,
-  loadTourSeen,
   saveTourSeen,
+  loadProfile,
+  saveProfile,
 } from "./lib/storage.js";
 
 // Combine the selected allergen chips + the free-text "other" into one list
@@ -85,6 +95,16 @@ export default function App() {
   const [servings, setServings] = useState(2);
   // Brief confirmation shown after a post-cooking pantry update.
   const [pantryToast, setPantryToast] = useState("");
+  // Active mobile view (bottom navigation). One of:
+  //   "pantry" | "smartMeal" | "calendar" | "profile"
+  // Desktop ignores this entirely; it only drives mobile section visibility.
+  const [mobileNav, setMobileNav] = useState("pantry");
+  // Local profile (display name + optional photo). Not an account.
+  const [profile, setProfile] = useState(() => loadProfile());
+  // The pantry item currently open in the Edit Item sheet (null = closed).
+  const [editingItem, setEditingItem] = useState(null);
+  // Full-screen welcome/splash shown on first open, before the Pantry tab.
+  const [showSplash, setShowSplash] = useState(true);
 
   // Persist whenever either piece of state changes.
   useEffect(() => {
@@ -99,6 +119,10 @@ export default function App() {
     saveAllergies(allergies);
   }, [allergies]);
 
+  useEffect(() => {
+    saveProfile(profile);
+  }, [profile]);
+
   // Auto-dismiss the post-cooking confirmation after a few seconds.
   useEffect(() => {
     if (!pantryToast) return;
@@ -106,13 +130,10 @@ export default function App() {
     return () => clearTimeout(t);
   }, [pantryToast]);
 
-  // Auto-start the tour on the user's first visit only.
-  useEffect(() => {
-    if (!loadTourSeen()) {
-      const t = setTimeout(() => setTourOpen(true), 400);
-      return () => clearTimeout(t);
-    }
-  }, []);
+  // The guided tour now starts ONLY through an explicit "Show me around"
+  // action (the splash button, the mobile header help icon, or the Profile
+  // button). The previous first-visit auto-start is intentionally disabled so
+  // the tour never launches on its own — including after the welcome splash.
 
   // End the tour (finished or skipped): remember it and reset to Pantry.
   function closeTour() {
@@ -145,6 +166,52 @@ export default function App() {
 
   function changeServings(delta) {
     setServings((s) => Math.min(8, Math.max(1, s + delta)));
+  }
+
+  // Mobile bottom-nav dispatcher. Each tab is a distinct mobile VIEW; the
+  // relevant sections are shown via CSS (driven by data-mobile-view on .app).
+  // No fake pages: Calendar also flips the existing pantryView state so the
+  // real CalendarView mounts (and so desktop's own toggle is unaffected since
+  // this only runs from the mobile nav). The other three keep the columns
+  // branch mounted via pantryView="pantry".
+  function handleMobileNav(tab) {
+    setMobileNav(tab);
+    setPantryView(tab === "calendar" ? "calendar" : "pantry");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  // Dismiss the welcome splash and land on the Pantry tab by default.
+  function dismissSplash() {
+    setShowSplash(false);
+    setMobileNav("pantry");
+    setPantryView("pantry");
+  }
+
+  // Smoothly scroll to a section within the current (Pantry) view. Used by the
+  // "Your Pantry" and "Items expiring soon" card headers so their chevrons do
+  // something real. Ensures the Pantry view is active first.
+  function scrollToPantryTarget(selector) {
+    setMobileNav("pantry");
+    setPantryView("pantry");
+    // Double rAF so any view/state change has settled before we measure.
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const el = document.querySelector(selector);
+        if (!el) return;
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+        // Brief highlight so the action is perceptible even when the target is
+        // already near the top and the scroll distance is tiny (common on tall
+        // desktop windows). Also move focus for keyboard users.
+        el.classList.add("nav-flash");
+        if (el.tabIndex < 0) el.setAttribute("tabindex", "-1");
+        try {
+          el.focus({ preventScroll: true });
+        } catch {
+          /* older browsers: ignore */
+        }
+        setTimeout(() => el.classList.remove("nav-flash"), 1100);
+      });
+    });
   }
 
   // After the user confirms the post-cooking pantry update: the deductions
@@ -195,8 +262,33 @@ export default function App() {
   }
 
   return (
-    <div className="app">
+    // data-mobile-view drives which sections are visible on mobile (<=560px).
+    // Desktop ignores it entirely and renders the full single-page layout.
+    <div className="app" data-mobile-view={mobileNav}>
+      {/* Full-screen welcome splash on first open. Covers the app while active;
+          dismisses after 3s, on any click/tap, or via "Show me around" (which
+          also starts the tour). Lands on the Pantry tab. */}
+      {showSplash && (
+        <SplashScreen onDismiss={dismissSplash} onStartTour={() => setTourOpen(true)} />
+      )}
+
+      {/* Desktop hero (hidden on mobile via CSS). */}
       <Hero onStartTour={() => setTourOpen(true)} />
+      {/* Compact app-style brand header (mobile only via CSS). The help icon
+          triggers the same existing tour — no second tour. */}
+      <MobileHeader onHelp={() => setTourOpen(true)} />
+
+      {/* Desktop-only top-right profile control (hidden on mobile via CSS).
+          Reuses the shared profile + preference state. */}
+      <DesktopProfileButton
+        profile={profile}
+        onSaveProfile={setProfile}
+        preference={preference}
+        onChangePreference={setPreference}
+        allergies={allergies}
+        onChangeAllergies={setAllergies}
+        onStartTour={() => setTourOpen(true)}
+      />
 
       <main className="app-main">
         {pantryToast && (
@@ -208,7 +300,9 @@ export default function App() {
         {pantryView === "calendar" ? (
           /* Dedicated full-width Calendar workspace: only the tabs + calendar.
              The meal sections are hidden (not unmounted-with-loss — all state
-             lives in App, so switching back restores everything). */
+             lives in App, so switching back restores everything). On mobile
+             this is the Calendar tab; the Pantry/Calendar segmented control is
+             hidden via CSS there (the bottom nav owns view switching). */
           <div className="calendar-workspace">
             <PantryTabs view={pantryView} onChange={setPantryView} />
             <CalendarView items={items} />
@@ -216,49 +310,103 @@ export default function App() {
         ) : (
           <>
             {/* Tabs sit in their own full-width row above the two columns so
-                that both columns share the same top edge on desktop. */}
+                that both columns share the same top edge on desktop. Hidden on
+                mobile (the bottom nav replaces this). */}
             <div className="pantry-tabs-row">
               <PantryTabs view={pantryView} onChange={setPantryView} />
             </div>
 
             <div className="app-columns">
-              {/* Left column (~65% on desktop): core pantry workspace */}
-              <div className="col-main">
+              {/* Left column (~65% on desktop): core pantry workspace. On
+                  mobile this is the Pantry TAB (data-mview="pantry"). The
+                  summary/expiring cards are passed into Pantry so they sit
+                  between search and "+ Add food" on mobile; hidden on desktop.
+                  Both are derived from `items` only. */}
+              <div className="col-main" id="pantry-section" data-mview="pantry">
                 <Pantry
                   items={items}
                   onAdd={handleAdd}
                   onDelete={handleDelete}
                   onLoadDemo={handleLoadDemo}
                   onDiscardExpired={handleDiscardExpired}
+                  onEditItem={setEditingItem}
+                  mobileSummary={
+                    <>
+                      <PantrySummary
+                        items={items}
+                        onNavigate={() => scrollToPantryTarget(".pantry-list-heading")}
+                      />
+                      <ExpiringSoon
+                        items={items}
+                        onNavigate={() => scrollToPantryTarget('[data-tour="use-first"]')}
+                        onEditItem={setEditingItem}
+                      />
+                    </>
+                  }
                 />
               </div>
 
-              {/* Right column (~35% on desktop): preferences + meal controls */}
+              {/* Right column (~35% on desktop): preferences + meal controls.
+                  On mobile these are split across the Profile and Smart Meal
+                  tabs via data-mview, while remaining the SAME single
+                  component instances (one source of truth). */}
               <div className="col-side">
-                <DietaryPreference value={preference} onChange={setPreference} />
-                <Allergies value={allergies} onChange={setAllergies} />
-                <RescueMeal
-                  pantry={items}
-                  status={mealStatus}
-                  errorMessage={mealError}
+                {/* Local profile identity card. One instance, shared state:
+                    on desktop it sits at the top of the sidebar; on mobile it
+                    appears in the Profile tab (data-mview="profile"). */}
+                <div className="profile-identity-card" data-mview="profile">
+                  <ProfileIdentity profile={profile} onSave={setProfile} />
+                </div>
+
+                {/* Profile tab (mobile): grouped settings around the existing
+                    Dietary + Allergies controls. */}
+                <MobileProfileTop />
+                <div data-mview="profile">
+                  <DietaryPreference value={preference} onChange={setPreference} />
+                </div>
+                <div data-mview="profile">
+                  <Allergies value={allergies} onChange={setAllergies} />
+                </div>
+                <MobileProfileBottom
                   servings={servings}
-                  onChangeServings={changeServings}
-                  onGenerate={() => handleGenerateMeal(false)}
+                  onStartTour={() => setTourOpen(true)}
                 />
+
+                {/* Smart Meal tab (mobile): intro + the existing controls. */}
+                <div id="smart-meal-section" data-mview="smartMeal">
+                  <div className="m-smartmeal-only">
+                    <SmartMealIntro
+                      items={items}
+                      preference={preference}
+                      allergies={allergies}
+                    />
+                  </div>
+                  <RescueMeal
+                    pantry={items}
+                    status={mealStatus}
+                    errorMessage={mealError}
+                    servings={servings}
+                    onChangeServings={changeServings}
+                    onGenerate={() => handleGenerateMeal(false)}
+                  />
+                </div>
               </div>
             </div>
 
             {/* Full-width result row beneath both columns, only when a recipe
-                exists: recipe card + compact post-cooking update panel. */}
+                exists: recipe card + compact post-cooking update panel. On
+                mobile it belongs to the Smart Meal tab (data-mview). */}
             {mealStatus === "success" && recipe && (
-              <RecipeResult
-                recipe={recipe}
-                pantry={items}
-                onUpdate={handleUpdate}
-                onDelete={handleDelete}
-                onRegenerate={() => handleGenerateMeal(true)}
-                onCooked={handleCookedComplete}
-              />
+              <div data-mview="smartMeal">
+                <RecipeResult
+                  recipe={recipe}
+                  pantry={items}
+                  onUpdate={handleUpdate}
+                  onDelete={handleDelete}
+                  onRegenerate={() => handleGenerateMeal(true)}
+                  onCooked={handleCookedComplete}
+                />
+              </div>
             )}
           </>
         )}
@@ -267,6 +415,19 @@ export default function App() {
       <footer className="app-footer">
         <p>ShelfBuddy MVP</p>
       </footer>
+
+      {/* Edit Item bottom sheet. Uses the LIVE item from `items` (by id) so it
+          always reflects current data, and saves through the existing
+          handleUpdate -> pantry state -> localStorage path (ID preserved). */}
+      <EditItemSheet
+        item={editingItem ? items.find((it) => it.id === editingItem.id) || null : null}
+        onSave={handleUpdate}
+        onRemove={handleDelete}
+        onClose={() => setEditingItem(null)}
+      />
+
+      {/* Fixed app-style bottom navigation (mobile only via CSS). */}
+      <MobileBottomNav active={mobileNav} onNavigate={handleMobileNav} />
 
       <Tour open={tourOpen} onClose={closeTour} onRequestView={setPantryView} />
     </div>
