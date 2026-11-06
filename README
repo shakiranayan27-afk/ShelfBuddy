@@ -1,0 +1,11 @@
+ShelfBuddy – BEX3202 AI-Built MVP
+ShelfBuddy helps users track groceries, prioritise food approaching expiry and generate AI-powered Smart Meal suggestions.  
+
+AI: Google Gemini 3.5 Flash-Lite  
+
+Local setup:
+npm install
+Create a .env file based on .env.example and provide a valid Gemini API key.
+Run the application using the project development commands.  
+
+Sensitive API credentials are not included in this repository.
